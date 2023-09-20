@@ -43,6 +43,17 @@ Widget sidebarContent(BuildContext context,
           onTap: () => Get.toNamed('/profile'),
         ),
         ListTile(
+          leading: const Icon(Icons.receipt_outlined),
+          iconColor: AppColor.accent,
+          title: ReText(
+            value: 'Recipt',
+            style: AppStyle().titleMedium.copyWith(
+                  color: AppColor.accent,
+                ),
+          ),
+          onTap: () => Get.toNamed('/user/recipt'),
+        ),
+        ListTile(
           leading: const Icon(Icons.format_list_numbered_rounded),
           iconColor: AppColor.accent,
           title: ReText(
@@ -51,7 +62,10 @@ Widget sidebarContent(BuildContext context,
                   color: AppColor.accent,
                 ),
           ),
-          onTap: () {},
+          onTap: () => Get.toNamed(
+            '/user/order',
+            arguments: {'isHistory': false},
+          ),
         ),
         ListTile(
           leading: const Icon(Icons.history_rounded),
@@ -62,7 +76,10 @@ Widget sidebarContent(BuildContext context,
                   color: AppColor.accent,
                 ),
           ),
-          onTap: () {},
+          onTap: () => Get.toNamed(
+            '/user/order',
+            arguments: {'isHistory': true},
+          ),
         ),
         ListTile(
           leading: const Icon(Icons.logout_rounded),

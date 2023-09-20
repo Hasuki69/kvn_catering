@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class UserController extends GetxController {
   @override
@@ -66,5 +67,16 @@ class UserController extends GetxController {
   void logout() {
     box.erase();
     Get.offAllNamed('/auth');
+  }
+
+  Future<void> locationPermission() async {
+    final PermissionStatus status = await Permission.location.request();
+    if (status.isDenied || status.isPermanentlyDenied) {
+      Get.snackbar("Location Permission",
+          "Location access needed to use Maps. You can enable it from app info.");
+      openAppSettings();
+    } else if (status.isGranted) {
+      return;
+    }
   }
 }

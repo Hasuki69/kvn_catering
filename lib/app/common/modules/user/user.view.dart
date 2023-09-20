@@ -93,14 +93,17 @@ Widget userBodyMenu(BuildContext context,
       (index) {
         return GestureDetector(
           onTap: () {
-            Get.toNamed(
-              '/user/catering-list',
-              parameters: {
-                'category': controller.menuItem()[index][0],
-                'itemIcon': controller.menuItem()[index][1],
-                'appbarBanner': controller.menuItem()[index][2],
-              },
-            );
+            controller.locationPermission().whenComplete(() {
+              Get.toNamed(
+                '/user/catering-list',
+                parameters: {
+                  'category': controller.menuItem()[index][0],
+                  'itemIcon': controller.menuItem()[index][1],
+                  'appbarBanner': controller.menuItem()[index][2],
+                },
+              );
+              
+            });
           },
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -270,11 +273,11 @@ Widget userBodyRecentHistory(BuildContext context,
                 color: AppColor.accent.withOpacity(0.4),
               ),
               RatingBar.builder(
-                initialRating: 3,
                 minRating: 1,
                 direction: Axis.horizontal,
                 itemCount: 5,
                 itemPadding: const EdgeInsets.symmetric(horizontal: 4),
+                glow: false,
                 itemBuilder: (context, _) => const Icon(
                   Icons.star,
                   color: AppColor.accent,

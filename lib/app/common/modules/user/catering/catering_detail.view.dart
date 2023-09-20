@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kvn_catering/app/common/modules/user/catering/catering_list.controller.dart';
+import 'package:kvn_catering/app/common/widgets/custom_button.dart';
 import 'package:kvn_catering/app/common/widgets/custom_elevation.dart';
+import 'package:kvn_catering/app/common/widgets/custom_listview.dart';
 import 'package:kvn_catering/app/common/widgets/custom_text.dart';
+import 'package:kvn_catering/app/core/configs/const.dart';
 import 'package:kvn_catering/app/core/themes/theme.dart';
+import 'package:kvn_catering/app/core/utils/extensions/string_currency.dart';
 
 class CateringDetailView extends GetView<CateringListController> {
   const CateringDetailView({super.key});
@@ -27,7 +31,7 @@ Widget cateringDetailBody(BuildContext context,
     children: [
       cateringDetailAppBar(context, controller: controller),
       cateringDetailBottomAppBar(context, controller: controller),
-      cateringDetailItemList(context, controller: controller),
+      cateringDetailListItem(context, controller: controller),
     ],
   );
 }
@@ -35,7 +39,7 @@ Widget cateringDetailBody(BuildContext context,
 Widget cateringDetailAppBar(BuildContext context,
     {required CateringListController controller}) {
   return SizedBox(
-    height: 250,
+    height: 300,
     child: Stack(
       children: [
         Container(
@@ -122,13 +126,18 @@ Widget cateringDetailAppbarCard(BuildContext context,
               ),
               Expanded(
                 flex: 5,
-                child: ReText(
-                  value: Get.arguments['catering-data']['alamat_catering'] ??
-                      'Catering Address',
-                  style: AppStyle().bodyLarge,
+                child: Obx(
+                  () => ReText(
+                    value: controller.catAddress(),
+                    style: AppStyle().bodyLarge,
+                    maxLines: 3,
+                  ),
                 ),
               ),
             ],
+          ),
+          const SizedBox(
+            height: 8,
           ),
           Row(
             children: [
@@ -140,13 +149,15 @@ Widget cateringDetailAppbarCard(BuildContext context,
               Expanded(
                 flex: 5,
                 child: ReText(
-                  value:
-                      'Kami menerima berbaigai macam layanan catering, semat menikmati :)',
+                  value: Get.arguments['catering-data']['deskripsi_catering'],
                   style: AppStyle().bodyLarge,
                   maxLines: 4,
                 ),
               ),
             ],
+          ),
+          const SizedBox(
+            height: 16,
           ),
         ],
       ),
@@ -205,7 +216,6 @@ Widget cateringDetailBottomBarDropdown(BuildContext context,
       child: DropdownMenu(
         initialSelection: controller.selectedFilter(),
         hintText: 'Pilih Tipe Pemesanan',
-        
         trailingIcon: const Icon(
           Icons.arrow_drop_down,
           color: AppColor.accent,
@@ -227,6 +237,7 @@ Widget cateringDetailBottomBarDropdown(BuildContext context,
         ),
         onSelected: (value) {
           controller.selectedFilter(value);
+          controller.setSelectedDate();
         },
         dropdownMenuEntries: List.generate(
           Get.arguments['catering-data']['tipe_pemesanan'].length,
@@ -245,67 +256,305 @@ Widget cateringDetailBottomBarDate(BuildContext context,
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16),
     child: Obx(
-      () => Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          if (controller.selectedFilter() != '')
-            Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                const Icon(
-                  Icons.calendar_today,
+      () => GestureDetector(
+        onTap: () {
+          controller.callDatePicker(context);
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (controller.selectedFilter() != '')
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.calendar_today,
+                      color: AppColor.accent,
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    ReText(
+                      value: controller.selectedDate1(),
+                      style: AppStyle().titleSmall,
+                    ),
+                  ],
                 ),
-                const SizedBox(
-                  width: 8,
+              if (controller.selectedFilter() == 'Mingguan' ||
+                  controller.selectedFilter() == 'Bulanan')
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    ReText(
+                      value: 's/d',
+                      style: AppStyle().bodySmall,
+                    ),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    ReText(
+                      value: controller.selectedDate2(),
+                      style: AppStyle().titleSmall,
+                    ),
+                  ],
                 ),
-                ReText(
-                  value: controller.selectedDate1(),
-                  style: AppStyle().titleSmall,
-                ),
-              ],
-            ),
-          if (controller.selectedFilter() == 'Mingguan' ||
-              controller.selectedFilter() == 'Bulanan')
-            Row(
-              children: [
-                const SizedBox(
-                  width: 16,
-                ),
-                ReText(
-                  value: 's/d',
-                  style: AppStyle().titleSmall,
-                ),
-                const SizedBox(
-                  width: 16,
-                ),
-              ],
-            ),
-          if (controller.selectedFilter() == 'Mingguan' ||
-              controller.selectedFilter() == 'Bulanan')
-            Wrap(
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                const Icon(
-                  Icons.calendar_today,
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-                ReText(
-                  value: controller.selectedDate1(),
-                  style: AppStyle().titleSmall,
-                ),
-              ],
-            ),
-        ],
+            ],
+          ),
+        ),
       ),
     ),
   );
 }
 
-Widget cateringDetailItemList(BuildContext context,
+Widget cateringDetailListItem(BuildContext context,
     {required CateringListController controller}) {
-  return Container();
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    child: Obx(
+      () => FutureBuilder(
+        future: controller.futureCateringMenu(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List snapData = snapshot.data! as List;
+            if (snapData[0] != 404) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ReListView(
+                    itemCount: snapData[2].length,
+                    itemBuilder: (context, index) {
+                      controller.menuItem(
+                        List.generate(
+                          snapData[2].length,
+                          (indexItem) => List.generate(
+                            snapData[2][indexItem]['menu'].length,
+                            (indexMenu) => [
+                              snapData[2][indexItem]['menu'][indexMenu]
+                                  ['id_menu'],
+                              snapData[2][indexItem]['menu'][indexMenu]
+                                  ['nama_menu'],
+                              0,
+                              snapData[2][indexItem]['menu'][indexMenu]
+                                  ['harga_menu'],
+                              snapData[2][indexItem]['tanggal_menu'],
+                            ],
+                          ),
+                        ),
+                      );
+
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ReText(
+                            value: '${snapData[2][index]['tanggal_menu']}',
+                            style: AppStyle().titleLarge.copyWith(
+                                  fontSize: 18,
+                                ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                          ),
+                          ReListView(
+                            itemCount: snapData[2][index]['menu'].length,
+                            itemBuilder: (context, indexMenu) {
+                              return ReElevation(
+                                child: Card(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 16),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ReText(
+                                          value:
+                                              '${snapData[2][index]['menu'][indexMenu]['jam_pengiriman_awal']} - ${snapData[2][index]['menu'][indexMenu]['jam_pengiriman_akhir']}',
+                                          style: AppStyle().titleSmall,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Card(
+                                                clipBehavior: Clip.antiAlias,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  side: BorderSide(
+                                                    color: AppColor.accent
+                                                        .withOpacity(0.4),
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                color: AppColor.background,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8),
+                                                  child: AspectRatio(
+                                                    aspectRatio: 1,
+                                                    child: Image(
+                                                      fit: BoxFit.fitWidth,
+                                                      loadingBuilder: (context,
+                                                          child,
+                                                          loadingProgress) {
+                                                        if (loadingProgress ==
+                                                            null) {
+                                                          return child;
+                                                        }
+                                                        return const Center(
+                                                          child:
+                                                              CircularProgressIndicator(),
+                                                        );
+                                                      },
+                                                      image: NetworkImage(
+                                                        '$apiImagePath${snapData[2][index]['menu'][indexMenu]['foto_menu']}',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 8,
+                                            ),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  ReText(
+                                                    value: snapData[2][index]
+                                                            ['menu'][indexMenu]
+                                                        ['nama_menu'],
+                                                    style: AppStyle()
+                                                        .titleMedium
+                                                        .copyWith(fontSize: 18),
+                                                    maxLines: 3,
+                                                  ),
+                                                  ReText(
+                                                    value: CurrencyFormat.toIdr(
+                                                        snapData[2][index]
+                                                                    ['menu']
+                                                                [indexMenu]
+                                                            ['harga_menu'],
+                                                        0),
+                                                    style: AppStyle().bodyLarge,
+                                                  ),
+                                                  StatefulBuilder(
+                                                    builder:
+                                                        (context, setState) {
+                                                      return Row(
+                                                        children: [
+                                                          const Spacer(),
+                                                          IconButton(
+                                                            color:
+                                                                AppColor.accent,
+                                                            onPressed: () {
+                                                              if (controller.menuItem[
+                                                                          index]
+                                                                      [
+                                                                      indexMenu][2] >
+                                                                  0) {
+                                                                controller.menuItem[
+                                                                            index]
+                                                                        [
+                                                                        indexMenu]
+                                                                    [2] -= 1;
+                                                              }
+                                                              if (context
+                                                                  .mounted) {
+                                                                setState(() {});
+                                                              }
+                                                            },
+                                                            icon: const Icon(
+                                                                Icons.remove),
+                                                          ),
+                                                          ReText(
+                                                            value:
+                                                                '${controller.menuItem[index][indexMenu][2]}',
+                                                            style: AppStyle()
+                                                                .titleMedium,
+                                                          ),
+                                                          IconButton(
+                                                            color:
+                                                                AppColor.accent,
+                                                            onPressed: () {
+                                                              controller.menuItem[
+                                                                          index]
+                                                                      [
+                                                                      indexMenu]
+                                                                  [2] += 1;
+                                                              if (context
+                                                                  .mounted) {
+                                                                setState(() {});
+                                                              }
+                                                            },
+                                                            icon: const Icon(
+                                                                Icons.add),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 56),
+                    child: ReElevatedButton(
+                      onPressed: () {
+                        controller.inputOrder(
+                            idCat: Get.arguments['catering-data']
+                                ['id_catering']);
+                      },
+                      child: ReText(
+                        value: 'Pesan Sekarang',
+                        style: AppStyle().titleSmall.copyWith(
+                              color: AppColor.primary,
+                            ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return Center(
+                child: ReText(
+                  value: 'No Catering Found!',
+                  style: AppStyle().titleLarge,
+                ),
+              );
+            }
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
+    ),
+  );
 }

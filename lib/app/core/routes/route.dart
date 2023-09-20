@@ -6,6 +6,10 @@ import 'package:kvn_catering/app/common/modules/profile/profile.view.dart';
 import 'package:kvn_catering/app/common/modules/splash/splash.view.dart';
 import 'package:kvn_catering/app/common/modules/user/catering/catering_detail.view.dart';
 import 'package:kvn_catering/app/common/modules/user/catering/catering_list.view.dart';
+import 'package:kvn_catering/app/common/modules/user/order/order.view.dart';
+import 'package:kvn_catering/app/common/modules/user/order/order_detail.dart';
+import 'package:kvn_catering/app/common/modules/user/recipt/recipt.view.dart';
+import 'package:kvn_catering/app/common/modules/user/recipt/recipt_detail.view.dart';
 import 'package:kvn_catering/app/common/modules/user/user.view.dart';
 import 'package:kvn_catering/app/core/configs/bindings.dart';
 import 'package:kvn_catering/app/core/configs/const.dart';
@@ -32,6 +36,26 @@ List<GetPage<dynamic>> getPages = [
     binding: UserBinding(),
   ),
   GetPage(
+    name: '/user/recipt',
+    page: () => const ReciptView(),
+    binding: ReciptBinding(),
+  ),
+  GetPage(
+    name: '/user/recipt/detail',
+    page: () => const ReciptDetailView(),
+    binding: ReciptBinding(),
+  ),
+  GetPage(
+    name: '/user/order',
+    page: () => const OrderView(),
+    binding: OrderBinding(),
+  ),
+  GetPage(
+    name: '/user/order/detail',
+    page: () => const OrderDetailView(),
+    binding: OrderBinding(),
+  ),
+  GetPage(
     name: '/user/catering-list',
     page: () => const CateringListView(),
     binding: CateringListBinding(),
@@ -39,7 +63,10 @@ List<GetPage<dynamic>> getPages = [
   GetPage(
     name: '/user/catering-list/detail',
     page: () => const CateringDetailView(),
-    binding: CateringListBinding(),
+    bindings: [
+      CateringListBinding(),
+      GmapBinding(),
+    ],
   ),
   GetPage(
     name: '/catering',

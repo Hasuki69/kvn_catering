@@ -3,7 +3,7 @@ import 'package:kvn_catering/app/core/themes/theme.dart';
 
 class ReText extends StatelessWidget {
   final String value;
-  final TextStyle style;
+  final TextStyle? style;
   final EdgeInsetsGeometry padding;
   final TextAlign textAlign;
   final TextOverflow overflow;
@@ -12,7 +12,7 @@ class ReText extends StatelessWidget {
   const ReText({
     super.key,
     required this.value,
-    required this.style,
+    this.style,
     this.padding = const EdgeInsets.all(2),
     this.textAlign = TextAlign.start,
     this.overflow = TextOverflow.ellipsis,
@@ -26,7 +26,7 @@ class ReText extends StatelessWidget {
       padding: padding,
       child: Text(
         value,
-        style: style,
+        style: style ?? AppStyle().bodyMedium,
         textAlign: textAlign,
         overflow: overflow,
         maxLines: maxLines,

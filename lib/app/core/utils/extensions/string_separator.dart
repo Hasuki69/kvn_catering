@@ -7,3 +7,11 @@ String addSeparator(List listItem, String sepatator) {
   }
   return result;
 }
+
+String strSeparator(List listItem, String sepatator) {
+  String result = '';
+  for (var element in listItem) {
+    result += '$sepatator$element$sepatator';
+  }
+  return result;
+}
