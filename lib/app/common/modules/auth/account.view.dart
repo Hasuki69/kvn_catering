@@ -232,6 +232,27 @@ Widget isCatering(BuildContext context, {required AuthController controller}) {
       ),
       const SizedBox(height: 8),
       waktuPemesanan(context, controller: controller),
+      const SizedBox(height: 8),
+      Row(
+        children: [
+          Expanded(
+            child: Obx(
+              () => ReText(
+                value: controller.imageFile(),
+              ),
+            ),
+          ),
+          ReElevatedButton(
+            onPressed: () {
+              controller.pickFile();
+            },
+            child: ReText(
+              value: 'Upload QR',
+              style: AppStyle().titleMedium.copyWith(color: AppColor.onAccent),
+            ),
+          ),
+        ],
+      ),
     ],
   );
 }

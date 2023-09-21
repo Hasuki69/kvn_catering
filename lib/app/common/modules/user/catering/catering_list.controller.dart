@@ -45,9 +45,12 @@ class CateringListController extends GetxController {
 
   var currLocation = const LatLng(0.0, 0.0);
 
+  var itemCount = 0.obs;
+
   // ==================== FUCTIONS ====================
   get session => box.read('session') ?? false;
   get uid => box.read('uid') ?? '';
+  get cateringUid => box.read('cateringUid') ?? '';
   get role => box.read('role') ?? 0;
 
   Future getCurrPos() async {
@@ -113,6 +116,8 @@ class CateringListController extends GetxController {
     selectedFilter.value = '';
     selectedDate1.value = DateFormat('dd-MM-yyyy').format(DateTime.now());
     selectedDate2.value = DateFormat('dd-MM-yyyy').format(DateTime.now());
+    itemCount.value = 0;
+    menuItem.value = [];
   }
 
   void setSelectedDate() {
@@ -126,6 +131,8 @@ class CateringListController extends GetxController {
     }
     updateCateringMenu(
         cateringUid: Get.arguments['catering-data']['id_catering']);
+    itemCount.value = 0;
+    menuItem.value = [];
   }
 
   Future<void> callDatePicker(BuildContext context) async {
@@ -145,6 +152,8 @@ class CateringListController extends GetxController {
     }
     updateCateringMenu(
         cateringUid: Get.arguments['catering-data']['id_catering']);
+    itemCount.value = 0;
+    menuItem.value = [];
   }
 
   Future<void> getAddress({required String lat, required String long}) async {

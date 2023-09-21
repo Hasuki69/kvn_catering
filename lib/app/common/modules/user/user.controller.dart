@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:location/location.dart' as loc;
 import 'package:permission_handler/permission_handler.dart';
 
 class UserController extends GetxController {
@@ -7,6 +8,7 @@ class UserController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
+    locationPermission();
   }
 
   @override
@@ -17,6 +19,7 @@ class UserController extends GetxController {
 
   // ==================== VARIABLES ====================
   GetStorage box = GetStorage();
+  loc.Location location = loc.Location();
 
   var menuItem = [
     [
@@ -62,11 +65,22 @@ class UserController extends GetxController {
 
   get session => box.read('session') ?? false;
   get uid => box.read('uid') ?? '';
+  get cateringUid => box.read('cateringUid') ?? '';
   get role => box.read('role') ?? 0;
 
   void logout() {
     box.erase();
     Get.offAllNamed('/auth');
+  }
+
+  Future<void> checkLocationAccess() async {
+    var serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
   }
 
   Future<void> locationPermission() async {
@@ -76,6 +90,7 @@ class UserController extends GetxController {
           "Location access needed to use Maps. You can enable it from app info.");
       openAppSettings();
     } else if (status.isGranted) {
+      checkLocationAccess();
       return;
     }
   }

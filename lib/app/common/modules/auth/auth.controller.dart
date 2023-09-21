@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -62,17 +65,27 @@ class AuthController extends GetxController
 
   var isSelect = false.obs;
 
+  var imagePath = ''.obs;
+  var imageFile = ''.obs;
+
   // ==================== FUCTIONS ====================
 
   get session => box.read('session') ?? false;
   get uid => box.read('uid') ?? '';
+  get cateringUid => box.read('cateringUid') ?? '';
   get role => box.read('role') ?? 0;
 
-  void setSession(
-      {bool session = true, required String uid, required int role}) {
+  void setSession({
+    bool session = true,
+    required String uid,
+    required int role,
+    required String cateringUid,
+  }) {
     box.write('session', session);
     box.write('uid', uid);
     box.write('role', role);
+
+    box.write('cateringUid', cateringUid);
   }
 
   Future<void> auth() async {
@@ -89,7 +102,11 @@ class AuthController extends GetxController
         .whenComplete(() => closeLoading());
 
     if (response[0] == 200) {
-      setSession(uid: response[2]['id_user'], role: response[2]['status_user']);
+      setSession(
+        uid: response[2]['id_user'],
+        role: response[2]['status_user'],
+        cateringUid: response[2]['id_catering'],
+      );
       if (role == 1) {
         Get.offAllNamed('/user');
       } else if (role == 2) {
@@ -115,38 +132,46 @@ class AuthController extends GetxController
   }
 
   Future<void> register() async {
-    getLoading();
-    String tempRole = '0';
-    isCatering() ? tempRole = '2' : tempRole = '1';
-
-    var response = await authService
-        .regis(
-          name: ctrlName.text,
-          email: ctrlEmail.text,
-          phone: ctrlTelp.text,
-          role: tempRole,
-          username: ctrlUsername.text,
-          password: ctrlPassword.text,
-        )
-        .whenComplete(() => closeLoading());
-
-    if (response[0] == 200) {
-      setSession(uid: response[2]['id_user'], role: response[2]['status_user']);
-      role == 1 ? Get.offAllNamed('/user') : regisCatering();
-    } else if (response[0] == 404) {
-      Get.snackbar(
-        'Status ${response[0]}',
-        response[1],
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+    if (imagePath.value == '') {
+      Get.snackbar('QR IMAGE', 'Foto QR tidak boleh kosong');
     } else {
-      Get.snackbar(
-        'Status ${response[0]}',
-        response[1],
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      getLoading();
+      String tempRole = '0';
+      isCatering() ? tempRole = '2' : tempRole = '1';
+
+      var response = await authService
+          .regis(
+            name: ctrlName.text,
+            email: ctrlEmail.text,
+            phone: ctrlTelp.text,
+            role: tempRole,
+            username: ctrlUsername.text,
+            password: ctrlPassword.text,
+          )
+          .whenComplete(() => closeLoading());
+
+      if (response[0] == 200) {
+        setSession(
+          uid: response[2]['id_user'],
+          role: response[2]['status_user'],
+          cateringUid: response[2]['id_catering'],
+        );
+        role == 1 ? Get.offAllNamed('/user') : regisCatering();
+      } else if (response[0] == 404) {
+        Get.snackbar(
+          'Status ${response[0]}',
+          response[1],
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          'Status ${response[0]}',
+          response[1],
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
     }
   }
 
@@ -162,6 +187,7 @@ class AuthController extends GetxController
           address: ctrlCateringAddress.text,
           description: ctrlCateringDescription.text,
           typePemesanan: typePemesanan,
+          qr: imagePath(),
         )
         .whenComplete(() => closeLoading());
 
@@ -218,5 +244,19 @@ class AuthController extends GetxController
     ctrlCateringPhone.clear();
     ctrlCateringEmail.clear();
     ctrlCateringDescription.clear();
+  }
+
+  Future pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+    );
+
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      imageFile.value = result.files.single.name;
+      imagePath.value = file.path;
+    } else {
+      return Get.snackbar("Error", "Please try again");
+    }
   }
 }

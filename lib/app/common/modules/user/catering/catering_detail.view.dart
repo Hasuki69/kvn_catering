@@ -470,6 +470,9 @@ Widget cateringDetailListItem(BuildContext context,
                                                                         [
                                                                         indexMenu]
                                                                     [2] -= 1;
+                                                                controller
+                                                                    .itemCount
+                                                                    .value -= 1;
                                                               }
                                                               if (context
                                                                   .mounted) {
@@ -494,6 +497,9 @@ Widget cateringDetailListItem(BuildContext context,
                                                                       [
                                                                       indexMenu]
                                                                   [2] += 1;
+                                                              controller
+                                                                  .itemCount
+                                                                  .value += 1;
                                                               if (context
                                                                   .mounted) {
                                                                 setState(() {});
@@ -525,17 +531,21 @@ Widget cateringDetailListItem(BuildContext context,
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(vertical: 8, horizontal: 56),
-                    child: ReElevatedButton(
-                      onPressed: () {
-                        controller.inputOrder(
-                            idCat: Get.arguments['catering-data']
-                                ['id_catering']);
-                      },
-                      child: ReText(
-                        value: 'Pesan Sekarang',
-                        style: AppStyle().titleSmall.copyWith(
-                              color: AppColor.primary,
-                            ),
+                    child: Obx(
+                      () => ReElevatedButton(
+                        onPressed: controller.itemCount() > 0
+                            ? () {
+                                controller.inputOrder(
+                                    idCat: Get.arguments['catering-data']
+                                        ['id_catering']);
+                              }
+                            : null,
+                        child: ReText(
+                          value: 'Pesan Sekarang',
+                          style: AppStyle().titleSmall.copyWith(
+                                color: AppColor.primary,
+                              ),
+                        ),
                       ),
                     ),
                   ),

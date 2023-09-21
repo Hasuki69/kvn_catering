@@ -31,8 +31,10 @@ class AppTheme implements MainTheme {
       );
 }
 
-Future setSystemUIOverlayStyle(final Color color) async {
+Future setSystemUIOverlayStyle() async {
   // Setting SystemUIMode
+
+  
   SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.edgeToEdge,
     overlays: [SystemUiOverlay.bottom],
@@ -40,15 +42,14 @@ Future setSystemUIOverlayStyle(final Color color) async {
 
   // Setting SystemUIOverlay
   SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
+    const SystemUiOverlayStyle(
       systemStatusBarContrastEnforced: true,
-      statusBarColor: color.withOpacity(0.002),
-      systemNavigationBarColor: color.withOpacity(0.002),
-      systemNavigationBarDividerColor: color.withOpacity(0.002),
-      systemNavigationBarIconBrightness: Brightness.dark,
-      statusBarIconBrightness: Brightness.dark,
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
     ),
   );
+  
 
   // Setting Orientation
   SystemChrome.setPreferredOrientations([

@@ -40,22 +40,31 @@ class AuthService {
     required String address,
     required String description,
     required String typePemesanan,
+    required String qr,
   }) async {
     var url = Uri.parse('$apiPath/cat/input-catering');
-    var response = await http.post(url, body: {
-      'id_user': uid,
-      'nama_catering': name,
-      'alamat_catering': address,
-      'telp_catering': phone,
-      'email_catering': email,
-      'deskripsi_catering': description,
-      'tipe_pemesanan': typePemesanan,
-    });
+    final request = http.MultipartRequest(
+      'POST',
+      url,
+    );
+    request.fields['id_user'] = uid;
+    request.fields['nama_catering'] = name;
+    request.fields['alamat_catering'] = address;
+    request.fields['telp_catering'] = phone;
+    request.fields['email_catering'] = email;
+    request.fields['deskripsi_catering'] = description;
+    request.fields['tipe_pemesanan'] = typePemesanan;
+    request.files.add(
+      await http.MultipartFile.fromPath('photo', qr),
+    );
+    
+    final response = await request.send();
     if (response.statusCode == 200) {
-      var respStatus = json.decode(response.body)['status'];
-      var respMessage = json.decode(response.body)['message'];
-      var respData = json.decode(response.body)['data'];
-      return [respStatus, respMessage, respData];
+      final resp = await http.Response.fromStream(response);
+      var status = json.decode(resp.body)['status'];
+      var message = json.decode(resp.body)['message'];
+      var body = json.decode(resp.body)['data'];
+      return [status, message, body];
     } else {
       return '${response.statusCode} Unable to connect to server!';
     }

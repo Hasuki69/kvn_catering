@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-class DeliveryController extends GetxController {
+class CateringLocationController extends GetxController {
   @override
   void onInit() {
     // TODO: implement onInit
@@ -14,18 +14,12 @@ class DeliveryController extends GetxController {
     super.onClose();
   }
 
-  // ==================== VARIABLES ====================
+  // ==================== VARIABLE ====================
   GetStorage box = GetStorage();
 
-  // ==================== FUCTIONS ====================
-
+  // ==================== FUNCTION ====================
   get session => box.read('session') ?? false;
   get uid => box.read('uid') ?? '';
   get cateringUid => box.read('cateringUid') ?? '';
   get role => box.read('role') ?? 0;
-
-  void logout() {
-    box.erase();
-    Get.offAllNamed('/auth');
-  }
 }

@@ -4,7 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:kvn_catering/app/common/services/remote/profile.service.dart';
 import 'package:kvn_catering/app/core/utils/extensions/loading_func.dart';
 
-class ProfileController extends GetxController {
+class UserProfileController extends GetxController {
   @override
   void onInit() {
     // TODO: implement onInit
@@ -16,6 +16,7 @@ class ProfileController extends GetxController {
   void onClose() {
     // TODO: implement onClose
     super.onClose();
+    disposeTEC();
   }
 
   // ==================== VARIABLES ====================
@@ -34,6 +35,7 @@ class ProfileController extends GetxController {
 
   get session => box.read('session') ?? false;
   get uid => box.read('uid') ?? '';
+  get cateringUid => box.read('cateringUid') ?? '';
   get role => box.read('role') ?? 0;
 
   Future<void> getProfile({required String uid}) async {
@@ -44,6 +46,12 @@ class ProfileController extends GetxController {
     ctrlName.text = data[2][0]['nama_user'];
     ctrlEmail.text = data[2][0]['email_user'];
     ctrlPhone.text = data[2][0]['telp_user'];
+  }
+
+  void disposeTEC() {
+    ctrlName.dispose();
+    ctrlEmail.dispose();
+    ctrlPhone.dispose();
   }
 
   void setReadOnly() {

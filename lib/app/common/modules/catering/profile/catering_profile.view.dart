@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kvn_catering/app/common/modules/profile/profile.controller.dart';
+import 'package:kvn_catering/app/common/modules/catering/profile/catering_profile.controller.dart';
 import 'package:kvn_catering/app/common/widgets/custom_button.dart';
 import 'package:kvn_catering/app/common/widgets/custom_text.dart';
 import 'package:kvn_catering/app/core/themes/theme.dart';
 
-class ProfileView extends GetView<ProfileController> {
-  const ProfileView({super.key});
+class CateringProfileView extends GetView<CateringProfileController> {
+  const CateringProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      appBar: profileAppBar(context, controller: controller),
+      appBar: cateringProfileAppBar(context, controller: controller),
       body: SingleChildScrollView(
         controller: ScrollController(),
-        child: profileBody(context, controller: controller),
+        child: cateringProfileBody(context, controller: controller),
       ),
     );
   }
 }
 
-PreferredSizeWidget profileAppBar(BuildContext context,
-    {required ProfileController controller}) {
+PreferredSizeWidget cateringProfileAppBar(BuildContext context,
+    {required CateringProfileController controller}) {
   return AppBar(
     centerTitle: true,
     forceMaterialTransparency: true,
@@ -40,21 +40,22 @@ PreferredSizeWidget profileAppBar(BuildContext context,
   );
 }
 
-Widget profileBody(BuildContext context,
-    {required ProfileController controller}) {
+Widget cateringProfileBody(BuildContext context,
+    {required CateringProfileController controller}) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 24),
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        profilePic(context, controller: controller),
-        profileData(context, controller: controller),
+        cateringProfilePic(context, controller: controller),
+        cateringProfileData(context, controller: controller),
       ],
     ),
   );
 }
 
-Widget profilePic(BuildContext context,
-    {required ProfileController controller}) {
+Widget cateringProfilePic(BuildContext context,
+    {required CateringProfileController controller}) {
   final size = MediaQuery.of(context).size;
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
@@ -88,11 +89,11 @@ Widget profilePic(BuildContext context,
   );
 }
 
-Widget profileData(BuildContext context,
-    {required ProfileController controller}) {
+Widget cateringProfileData(BuildContext context,
+    {required CateringProfileController controller}) {
   return Obx(
     () => FutureBuilder(
-      future: controller.futureProfile.value,
+      future: controller.futureCateringProfile.value,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List snapData = snapshot.data! as List;
@@ -105,7 +106,7 @@ Widget profileData(BuildContext context,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ReText(
-                      value: 'Nama',
+                      value: 'Nama Catering',
                       style: AppStyle()
                           .titleMedium
                           .copyWith(color: AppColor.accent),
@@ -117,7 +118,31 @@ Widget profileData(BuildContext context,
                     ),
                     const SizedBox(height: 8),
                     ReText(
-                      value: 'Email',
+                      value: 'Alamat Catering',
+                      style: AppStyle()
+                          .titleMedium
+                          .copyWith(color: AppColor.accent),
+                    ),
+                    ReTextField(
+                      controller: controller.ctrlAddress,
+                      hintText: 'Update Alamat',
+                      readOnly: controller.isReadOnly(),
+                    ),
+                    const SizedBox(height: 8),
+                    ReText(
+                      value: 'No. telp Catering',
+                      style: AppStyle()
+                          .titleMedium
+                          .copyWith(color: AppColor.accent),
+                    ),
+                    ReTextField(
+                      controller: controller.ctrlPhone,
+                      hintText: 'Update No Telp',
+                      readOnly: controller.isReadOnly(),
+                    ),
+                    const SizedBox(height: 8),
+                    ReText(
+                      value: 'Email Catering',
                       style: AppStyle()
                           .titleMedium
                           .copyWith(color: AppColor.accent),
@@ -129,17 +154,18 @@ Widget profileData(BuildContext context,
                     ),
                     const SizedBox(height: 8),
                     ReText(
-                      value: 'No. telp',
+                      value: 'Desc Catering',
                       style: AppStyle()
                           .titleMedium
                           .copyWith(color: AppColor.accent),
                     ),
                     ReTextField(
-                      controller: controller.ctrlPhone,
-                      hintText: 'Update No Telp',
+                      controller: controller.ctrlDesc,
+                      hintText: 'Update Desc',
                       readOnly: controller.isReadOnly(),
                     ),
                     const SizedBox(height: 16),
+                    // waktuPemesanan(context, controller: controller),
                     Row(
                       children: [
                         if (!controller.isReadOnly())
@@ -147,7 +173,9 @@ Widget profileData(BuildContext context,
                             child: ReElevatedButton(
                               onPressed: () {
                                 controller.setReadOnly();
-                                controller.getProfile(uid: controller.uid);
+                                controller.getCateringProfile(
+                                    uid: controller.uid);
+                                controller.setControllerValue(snapData);
                               },
                               child: ReText(
                                 value: 'Cancel',
@@ -163,7 +191,12 @@ Widget profileData(BuildContext context,
                             onPressed: () {
                               controller.isReadOnly()
                                   ? controller.setReadOnly()
-                                  : controller.updateProfile();
+                                  : controller
+                                      .updateCateringProfile()
+                                      .whenComplete(
+                                        () => controller
+                                            .setControllerValue(snapData),
+                                      );
                             },
                             child: ReText(
                               value:
@@ -196,3 +229,58 @@ Widget profileData(BuildContext context,
     ),
   );
 }
+
+/*
+Widget waktuPemesanan(BuildContext context,
+    {required CateringProfileController controller}) {
+  return Obx(
+    () => AbsorbPointer(
+      absorbing: controller.isReadOnly(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ReText(
+            value: 'Waktu Pemesanan',
+            style: AppStyle().titleMedium.copyWith(color: AppColor.accent),
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemCount: controller.waktuPemesanan().length,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemBuilder: (context, index) {
+              return StatefulBuilder(
+                builder: (context, setState) => CheckboxListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  checkColor: AppColor.onAccent,
+                  activeColor: AppColor.accent,
+                  title: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 2, horizontal: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppColor.accent),
+                    ),
+                    child: ReText(
+                        value: controller.waktuPemesanan()[index][0],
+                        style: AppStyle().titleMedium),
+                  ),
+                  value: controller.waktuPemesanan()[index][1],
+                  onChanged: (val) {
+                    controller.waktuPemesanan()[index][1] = val!;
+                    setState(() {});
+                    debugPrint(controller.waktuPemesanan().toString());
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}
+*/

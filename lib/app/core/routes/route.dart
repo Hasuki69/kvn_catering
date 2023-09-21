@@ -1,8 +1,15 @@
 import 'package:get/get.dart';
 import 'package:kvn_catering/app/common/modules/auth/auth.view.dart';
+import 'package:kvn_catering/app/common/modules/catering/budgeting/catering_budgeting.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/catering.view.dart';
+import 'package:kvn_catering/app/common/modules/catering/location/catering_location.view.dart';
+import 'package:kvn_catering/app/common/modules/catering/menu/catering_menu.view.dart';
+import 'package:kvn_catering/app/common/modules/catering/notification/catering_notification.view.dart';
+import 'package:kvn_catering/app/common/modules/catering/order/catering_order.view.dart';
+import 'package:kvn_catering/app/common/modules/catering/pengantar/catering_pengantar.view.dart';
+import 'package:kvn_catering/app/common/modules/catering/profile/catering_profile.view.dart';
 import 'package:kvn_catering/app/common/modules/delivery/delivery.view.dart';
-import 'package:kvn_catering/app/common/modules/profile/profile.view.dart';
+import 'package:kvn_catering/app/common/modules/user/profile/user_profile.view.dart';
 import 'package:kvn_catering/app/common/modules/splash/splash.view.dart';
 import 'package:kvn_catering/app/common/modules/user/catering/catering_detail.view.dart';
 import 'package:kvn_catering/app/common/modules/user/catering/catering_list.view.dart';
@@ -26,14 +33,14 @@ List<GetPage<dynamic>> getPages = [
     binding: AuthBinding(),
   ),
   GetPage(
-    name: '/profile',
-    page: () => const ProfileView(),
-    binding: ProfileBinding(),
-  ),
-  GetPage(
     name: '/user',
     page: () => const UserView(),
     binding: UserBinding(),
+  ),
+  GetPage(
+    name: '/user/profile',
+    page: () => const UserProfileView(),
+    binding: UserProfileBinding(),
   ),
   GetPage(
     name: '/user/recipt',
@@ -72,6 +79,41 @@ List<GetPage<dynamic>> getPages = [
     name: '/catering',
     page: () => const CateringView(),
     binding: CateringBinding(),
+  ),
+  GetPage(
+    name: '/catering/profile',
+    page: () => const CateringProfileView(),
+    binding: CateringProfileBinding(),
+  ),
+  GetPage(
+    name: '/catering/notification',
+    page: () => const CateringNotificationView(),
+    binding: CateringNotificationBinding(),
+  ),
+  GetPage(
+    name: '/catering/menu',
+    page: () => const CateringMenuView(),
+    binding: CateringMenuBinding(),
+  ),
+  GetPage(
+    name: '/catering/location',
+    page: () => const CateringLocationView(),
+    binding: CateringLocationBinding(),
+  ),
+  GetPage(
+    name: '/catering/budgeting',
+    page: () => const CateringBudgetingView(),
+    binding: CateringBudgetingBinding(),
+  ),
+  GetPage(
+    name: '/catering/pengantar',
+    page: () => const CateringPengantarView(),
+    binding: CateringPengantarBinding(),
+  ),
+  GetPage(
+    name: '/catering/order',
+    page: () => const CateringOrderView(),
+    binding: CateringOrderBinding(),
   ),
   GetPage(
     name: '/delivery',

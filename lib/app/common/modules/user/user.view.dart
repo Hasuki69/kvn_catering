@@ -18,7 +18,7 @@ class UserView extends GetView<UserController> {
     return Scaffold(
       extendBody: true,
       appBar: userAppbar(context, controller: controller),
-      endDrawer: sidebar(context, controller: controller),
+      endDrawer: userSidebar(context, controller: controller),
       body: SingleChildScrollView(
         controller: ScrollController(),
         child: userBody(context, controller: controller),
