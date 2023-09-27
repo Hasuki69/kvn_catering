@@ -4,9 +4,9 @@ import 'package:kvn_catering/app/core/configs/const.dart';
 
 class ReciptService {
   // Get Order
-  Future getRecipt({required String uid}) async {
+  Future getRecipt({required String uid, required String tanggal}) async {
     var url = Uri.parse(
-      '$apiPath/PBR/read-recipe-order?id_user=$uid',
+      '$apiPath/PBR/read-recipe-order?id=$uid&tanggal_recipe=$tanggal',
     );
     var response = await http.get(url);
     if (response.statusCode == 200) {

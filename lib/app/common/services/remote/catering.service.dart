@@ -4,9 +4,9 @@ import 'package:kvn_catering/app/core/configs/const.dart';
 
 class CateringService {
   // Get Catering
-  Future getCatering() async {
+  Future getCatering({required String uid, required String type}) async {
     var url = Uri.parse(
-      '$apiPath/cat/read-cat',
+      '$apiPath/cat/filter-catering?id_user=$uid&tipe=$type',
     );
     var response = await http.get(url);
     if (response.statusCode == 200) {
@@ -38,6 +38,25 @@ class CateringService {
     }
   }
 
+  // Add to Fav
+  Future addToFav({required String uid, required String idCat}) async {
+    var url = Uri.parse(
+      '$apiPath/cat/favorite-catering',
+    );
+    var response = await http.post(url, body: {
+      'id_user': uid,
+      'id_catering': idCat,
+    });
+    if (response.statusCode == 200) {
+      var respStatus = json.decode(response.body)['status'];
+      var respMessage = json.decode(response.body)['message'];
+      var respData = json.decode(response.body)['data'];
+      return [respStatus, respMessage, respData];
+    } else {
+      return '${response.statusCode} Unable to connect to server!';
+    }
+  }
+
   Future<String> getCateringAddress(
       {required String lat, required String long}) async {
     var url = Uri.parse(
@@ -57,6 +76,61 @@ class CateringService {
       } else {
         return 'Not Found';
       }
+    } else {
+      return '${response.statusCode} Unable to connect to server!';
+    }
+  }
+
+  // Get QR Payment
+  Future getQr({required String catUid}) async {
+    var url = Uri.parse(
+      '$apiPath/cat/get-QR-catering?id_catering=$catUid',
+    );
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var respStatus = json.decode(response.body)['status'];
+      var respMessage = json.decode(response.body)['message'];
+      var respData = json.decode(response.body)['data'];
+      return [respStatus, respMessage, respData];
+    } else {
+      return '${response.statusCode} Unable to connect to server!';
+    }
+  }
+
+  // Catering Add Menu
+  Future catAddMenu({
+    required String catUid,
+    required String nama,
+    required String harga,
+    required String tanggal,
+    required String jamAwal,
+    required String jamAkhir,
+    required String status,
+    required String photo,
+  }) async {
+    var url = Uri.parse('$apiPath/mn/input-menu');
+    final request = http.MultipartRequest(
+      'POST',
+      url,
+    );
+    request.fields['id_catering'] = catUid;
+    request.fields['nama_menu'] = nama;
+    request.fields['harga_menu'] = harga;
+    request.fields['tanggal_menu'] = tanggal;
+    request.fields['jam_pengiriman_awal'] = jamAwal;
+    request.fields['jam_pengiriman_akhir'] = jamAkhir;
+    request.fields['status'] = status;
+    request.files.add(
+      await http.MultipartFile.fromPath('photo', photo),
+    );
+
+    final response = await request.send();
+    if (response.statusCode == 200) {
+      final resp = await http.Response.fromStream(response);
+      var status = json.decode(resp.body)['status'];
+      var message = json.decode(resp.body)['message'];
+      var body = json.decode(resp.body)['data'];
+      return [status, message, body];
     } else {
       return '${response.statusCode} Unable to connect to server!';
     }

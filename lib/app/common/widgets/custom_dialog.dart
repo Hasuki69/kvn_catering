@@ -38,68 +38,77 @@ class ReActionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: backgroundColor,
-      elevation: elevation,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(radius),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ReText(
-            value: title,
-            style: titleStyle ?? AppStyle().titleLarge,
-            padding: const EdgeInsets.symmetric(vertical: 16),
+    return Center(
+      child: SingleChildScrollView(
+        controller: ScrollController(),
+        child: Dialog(
+          backgroundColor: backgroundColor,
+          elevation: elevation,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radius),
           ),
-          const Divider(
-            height: 0,
-          ),
-          Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: Padding(
-                  padding: contentPadding,
-                  child: Column(
-                    crossAxisAlignment: childrenAlignment,
-                    children: children ?? [],
+              ReText(
+                value: title,
+                style: titleStyle ?? AppStyle().titleLarge,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              const Divider(
+                height: 0,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: contentPadding,
+                      child: Column(
+                        crossAxisAlignment: childrenAlignment,
+                        children: children ?? [],
+                      ),
+                    ),
                   ),
-                ),
+                ],
+              ),
+              const Divider(
+                height: 0,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: onCancel,
+                      child: ReText(
+                        value: cancelText,
+                        style: actionStyle ??
+                            AppStyle()
+                                .titleMedium
+                                .copyWith(color: AppColor.accent),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 56,
+                    child: VerticalDivider(),
+                  ),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: onConfirm,
+                      child: ReText(
+                        value: confirmText,
+                        style: actionStyle ??
+                            AppStyle()
+                                .titleMedium
+                                .copyWith(color: AppColor.accent),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          const Divider(
-            height: 0,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: onCancel,
-                  child: ReText(
-                    value: cancelText,
-                    style: actionStyle ??
-                        AppStyle().titleMedium.copyWith(color: AppColor.accent),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 56,
-                child: VerticalDivider(),
-              ),
-              Expanded(
-                child: TextButton(
-                  onPressed: onConfirm,
-                  child: ReText(
-                    value: confirmText,
-                    style: actionStyle ??
-                        AppStyle().titleMedium.copyWith(color: AppColor.accent),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }

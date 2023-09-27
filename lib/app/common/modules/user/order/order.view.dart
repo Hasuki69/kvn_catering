@@ -118,6 +118,9 @@ Widget orderBodyContent(BuildContext context,
               return ReListView(
                 itemCount: snapData[2].length,
                 itemBuilder: (context, index) {
+                  var menuList = !Get.arguments['isHistory']
+                      ? snapData[2][index]['menu_order_dipesan']
+                      : snapData[2][index]['history_order'];
                   return ReElevation(
                     child: Card(
                       child: Theme(
@@ -129,7 +132,7 @@ Widget orderBodyContent(BuildContext context,
                             style: AppStyle().titleMedium,
                           ),
                           children: List.generate(
-                            snapData[2][index]['menu_order_dipesan'].length,
+                            menuList.length,
                             (indexItem) => Column(
                               children: [
                                 if (indexItem == 0) const Divider(),
@@ -140,14 +143,13 @@ Widget orderBodyContent(BuildContext context,
                                       children: [
                                         ReText(
                                           value:
-                                              '${snapData[2][index]['menu_order_dipesan'][indexItem]['nama_menu']}',
+                                              '${menuList[indexItem]['nama_menu']}',
                                           style: AppStyle().bodyMedium,
                                         ),
                                         ReText(
                                           value: CurrencyFormat.toIdr(
-                                              int.parse(snapData[2][index]
-                                                      ['menu_order_dipesan']
-                                                  [indexItem]['harga_menu']),
+                                              int.parse(menuList[indexItem]
+                                                  ['harga_menu']),
                                               0),
                                           style: AppStyle().bodySmall,
                                         ),
@@ -160,10 +162,8 @@ Widget orderBodyContent(BuildContext context,
                                             onPressed: () {
                                               controller
                                                   .getOrderDetail(
-                                                      orderDetailUid: snapData[
-                                                                      2][index][
-                                                                  'menu_order_dipesan']
-                                                              [indexItem]
+                                                      orderDetailUid: menuList[
+                                                              indexItem]
                                                           ['id_detail_order'])
                                                   .whenComplete(
                                                     () => Get.toNamed(
@@ -188,11 +188,12 @@ Widget orderBodyContent(BuildContext context,
                                                     ratingDialog(
                                                       context,
                                                       controller: controller,
-                                                      orderDetailUid: snapData[
-                                                                      2][index][
-                                                                  'menu_order_dipesan']
-                                                              [indexItem]
+                                                      orderDetailUid: menuList[
+                                                              indexItem]
                                                           ['id_detail_order'],
+                                                      idCatering:
+                                                          menuList[indexItem]
+                                                              ['id_catering'],
                                                     ),
                                                   );
                                                 },
@@ -213,7 +214,9 @@ Widget orderBodyContent(BuildContext context,
                                                   const Icon(Icons.star,
                                                       color: AppColor.accent),
                                                   ReText(
-                                                    value: '0.0',
+                                                    value: menuList[indexItem]
+                                                            ['rating']
+                                                        .toString(),
                                                     style:
                                                         AppStyle().titleSmall,
                                                   ),
@@ -223,10 +226,7 @@ Widget orderBodyContent(BuildContext context,
                                           ),
                                       ],
                                     )),
-                                if (indexItem <
-                                    snapData[2][index]['menu_order_dipesan']
-                                            .length -
-                                        1)
+                                if (indexItem < menuList.length - 1)
                                   const Divider(),
                               ],
                             ),
@@ -256,7 +256,9 @@ Widget orderBodyContent(BuildContext context,
 }
 
 Widget ratingDialog(BuildContext context,
-    {required OrderController controller, required String orderDetailUid}) {
+    {required OrderController controller,
+    required String orderDetailUid,
+    required String idCatering}) {
   return ReActionDialog(
     title: 'Beri Penilaian',
     children: [
@@ -274,7 +276,9 @@ Widget ratingDialog(BuildContext context,
           Icons.star,
           color: AppColor.accent,
         ),
-        onRatingUpdate: (rating) {},
+        onRatingUpdate: (rating) {
+          controller.rating(rating.toInt());
+        },
       ),
       const SizedBox(
         height: 16,
@@ -294,7 +298,8 @@ Widget ratingDialog(BuildContext context,
       Get.back();
     },
     onConfirm: () {
-      // Confirm
+      controller.postRating(
+          uidDetailOrder: orderDetailUid, idCatering: idCatering);
     },
   );
 }

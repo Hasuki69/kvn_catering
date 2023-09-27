@@ -1,10 +1,8 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:kvn_catering/app/common/services/remote/auth.service.dart';
+import 'package:kvn_catering/app/core/utils/extensions/filepicker_func.dart';
 import 'package:kvn_catering/app/core/utils/extensions/loading_func.dart';
 import 'package:kvn_catering/app/core/utils/extensions/string_separator.dart';
 
@@ -75,6 +73,16 @@ class AuthController extends GetxController
   get cateringUid => box.read('cateringUid') ?? '';
   get role => box.read('role') ?? 0;
 
+  Future<void> pickFile() async {
+    var result = await filePicker();
+    if (result == null) {
+      Get.snackbar("Error", "Please try again");
+    } else {
+      imagePath(result['path']);
+      imageFile(result['name']);
+    }
+  }
+
   void setSession({
     bool session = true,
     required String uid,
@@ -132,12 +140,12 @@ class AuthController extends GetxController
   }
 
   Future<void> register() async {
-    if (imagePath.value == '') {
+    String tempRole = '0';
+    isCatering() ? tempRole = '2' : tempRole = '1';
+    if (imagePath.value == '' && tempRole == '2') {
       Get.snackbar('QR IMAGE', 'Foto QR tidak boleh kosong');
     } else {
       getLoading();
-      String tempRole = '0';
-      isCatering() ? tempRole = '2' : tempRole = '1';
 
       var response = await authService
           .regis(
@@ -244,19 +252,5 @@ class AuthController extends GetxController
     ctrlCateringPhone.clear();
     ctrlCateringEmail.clear();
     ctrlCateringDescription.clear();
-  }
-
-  Future pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-    );
-
-    if (result != null) {
-      File file = File(result.files.single.path!);
-      imageFile.value = result.files.single.name;
-      imagePath.value = file.path;
-    } else {
-      return Get.snackbar("Error", "Please try again");
-    }
   }
 }

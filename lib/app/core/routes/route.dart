@@ -9,6 +9,7 @@ import 'package:kvn_catering/app/common/modules/catering/order/catering_order.vi
 import 'package:kvn_catering/app/common/modules/catering/pengantar/catering_pengantar.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/profile/catering_profile.view.dart';
 import 'package:kvn_catering/app/common/modules/delivery/delivery.view.dart';
+import 'package:kvn_catering/app/common/modules/user/catering/pembayaran.view.dart';
 import 'package:kvn_catering/app/common/modules/user/profile/user_profile.view.dart';
 import 'package:kvn_catering/app/common/modules/splash/splash.view.dart';
 import 'package:kvn_catering/app/common/modules/user/catering/catering_detail.view.dart';
@@ -76,6 +77,13 @@ List<GetPage<dynamic>> getPages = [
     ],
   ),
   GetPage(
+    name: '/user/catering-list/detail-payment',
+    page: () => const PembayaranCateringView(),
+    bindings: [
+      CateringListBinding(),
+    ],
+  ),
+  GetPage(
     name: '/catering',
     page: () => const CateringView(),
     binding: CateringBinding(),
@@ -98,7 +106,10 @@ List<GetPage<dynamic>> getPages = [
   GetPage(
     name: '/catering/location',
     page: () => const CateringLocationView(),
-    binding: CateringLocationBinding(),
+    bindings: [
+      CateringLocationBinding(),
+      GmapBinding(),
+    ],
   ),
   GetPage(
     name: '/catering/budgeting',

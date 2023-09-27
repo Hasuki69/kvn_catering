@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:kvn_catering/app/common/services/remote/order.service.dart';
 import 'package:kvn_catering/app/core/utils/extensions/datepicker_func.dart';
+import 'package:kvn_catering/app/core/utils/extensions/loading_func.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class OrderController extends GetxController {
@@ -24,6 +25,8 @@ class OrderController extends GetxController {
   // ==================== VARIABLES ====================
   GetStorage box = GetStorage();
   OrderService orderService = OrderService();
+
+  var rating = 0.obs;
 
   var futureOrder = Future.value().obs;
   var futureOrderDetail = Future.value().obs;
@@ -48,7 +51,11 @@ class OrderController extends GetxController {
   }
 
   Future<void> getOrder({required String date}) async {
-    futureOrder = orderService.getOrder(uid: uid, date: date).obs;
+    if (!Get.arguments['isHistory']) {
+      futureOrder = orderService.getOrder(uid: uid, date: date).obs;
+    } else {
+      futureOrder = orderService.getHistory(uid: uid, date: date).obs;
+    }
   }
 
   Future<void> getOrderDetail({required String orderDetailUid}) async {
@@ -71,6 +78,41 @@ class OrderController extends GetxController {
       await launchUrl(url);
     } else {
       throw 'Tidak dapat membuka WhatsApp';
+    }
+  }
+
+  Future<void> postRating(
+      {required String uidDetailOrder, required String idCatering}) async {
+    var response = await orderService
+        .postRating(
+            uidDetailOrder: uidDetailOrder,
+            idCatering: idCatering,
+            rating: rating().toString(),
+            review: reviewController.text)
+        .whenComplete(() => closeLoading());
+    clearTEC();
+    if (response[0] == 200) {
+      getOrder(date: selectedDate1());
+      Get.snackbar(
+        'Status ${response[0]}',
+        response[1],
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } else if (response[0] == 404) {
+      Get.snackbar(
+        'Status ${response[0]}',
+        response[1],
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } else {
+      Get.snackbar(
+        'Status ${response[0]}',
+        response[1],
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 

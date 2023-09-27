@@ -1,11 +1,13 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:kvn_catering/app/common/services/local/location.service.dart';
 
 class CateringController extends GetxController {
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
+    locationServices.locationPermission();
   }
 
   @override
@@ -16,6 +18,7 @@ class CateringController extends GetxController {
 
   // ==================== VARIABLES ====================
   GetStorage box = GetStorage();
+  LocationServices locationServices = LocationServices();
 
   var menuItem = [
     [

@@ -1,14 +1,14 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:location/location.dart' as loc;
-import 'package:permission_handler/permission_handler.dart';
+import 'package:kvn_catering/app/common/services/local/location.service.dart';
+
 
 class UserController extends GetxController {
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    locationPermission();
+    locationServices.locationPermission();
   }
 
   @override
@@ -19,7 +19,8 @@ class UserController extends GetxController {
 
   // ==================== VARIABLES ====================
   GetStorage box = GetStorage();
-  loc.Location location = loc.Location();
+  LocationServices locationServices = LocationServices();
+  
 
   var menuItem = [
     [
@@ -73,25 +74,4 @@ class UserController extends GetxController {
     Get.offAllNamed('/auth');
   }
 
-  Future<void> checkLocationAccess() async {
-    var serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        return;
-      }
-    }
-  }
-
-  Future<void> locationPermission() async {
-    final PermissionStatus status = await Permission.location.request();
-    if (status.isDenied || status.isPermanentlyDenied) {
-      Get.snackbar("Location Permission",
-          "Location access needed to use Maps. You can enable it from app info.");
-      openAppSettings();
-    } else if (status.isGranted) {
-      checkLocationAccess();
-      return;
-    }
-  }
 }

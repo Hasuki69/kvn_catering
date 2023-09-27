@@ -40,7 +40,17 @@ class GmapController extends GetxController {
     zoom: 14.4746,
   ).obs;
 
+  var selectedLocation = const LatLng(0.0, 0.0).obs;
+  var selectedMarker = const Marker(
+    markerId: MarkerId('selected_marker'),
+  ).obs;
+  var selectedRadius = 100.0.obs;
+
+  var isMyLocation = true.obs;
+  var co = 0;
+
   // ==================== FUCTIONS ====================
+
   Future<void> locationPermission() async {
     final PermissionStatus status = await Permission.location.request();
     if (status.isDenied || status.isPermanentlyDenied) {
@@ -100,5 +110,76 @@ class GmapController extends GetxController {
         ),
       );
     });
+  }
+
+  void setLocationOnMapCreated(GoogleMapController controller) async {
+    mapController = controller;
+
+    await locationPermission();
+
+    final position = await Geolocator.getCurrentPosition();
+
+    selectedLocation(
+      LatLng(position.latitude, position.longitude),
+    );
+
+    mapController!.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: selectedLocation(),
+          zoom: 14.4746,
+        ),
+      ),
+    );
+
+    Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.bestForNavigation,
+        distanceFilter: 0,
+      ),
+    ).listen((event) {
+      if (isMyLocation()) {
+        selectedLocation(LatLng(event.latitude, event.longitude));
+        selectedMarker(
+          Marker(
+            markerId: const MarkerId('selected_marker'),
+            position: selectedLocation(),
+          ),
+        );
+        if (co < 1) {
+          mapController!.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: selectedLocation(),
+                zoom: 14.4746,
+              ),
+            ),
+          );
+          co++;
+        }
+      }
+    });
+  }
+
+  void setSelectedLocation(LatLng latLng) {
+    selectedLocation(latLng);
+    selectedMarker(
+      Marker(
+        markerId: const MarkerId('selected_marker'),
+        position: selectedLocation(),
+      ),
+    );
+    mapController!.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: selectedLocation(),
+          zoom: 14.4746,
+        ),
+      ),
+    );
+  }
+
+  void setRadius({required double radius}) {
+    selectedRadius(radius);
   }
 }

@@ -10,7 +10,7 @@ class ReciptController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    getRecipt();
+    getRecipt(tanggal: '');
   }
 
   @override
@@ -35,8 +35,20 @@ class ReciptController extends GetxController {
   get cateringUid => box.read('cateringUid') ?? '';
   get role => box.read('role') ?? 0;
 
-  Future<void> getRecipt() async {
-    futureRecipt = reciptService.getRecipt(uid: uid).obs;
+  Future<void> getRecipt({required String tanggal}) async {
+    futureRecipt = reciptService
+        .getRecipt(
+          uid: uid,
+          tanggal: tanggal,
+        )
+        .obs;
+  }
+
+  Future<void> reloadRecipt({required String tanggal}) async {
+    futureRecipt.value = reciptService.getRecipt(
+      uid: uid,
+      tanggal: tanggal,
+    );
   }
 
   Future<void> getReciptDetail({required String orderUid}) async {
@@ -49,5 +61,6 @@ class ReciptController extends GetxController {
     });
 
     selectedDate1.value = DateFormat('dd-MM-yyyy').format(selectedDate);
+    reloadRecipt(tanggal: selectedDate1());
   }
 }

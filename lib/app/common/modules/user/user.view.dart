@@ -93,16 +93,16 @@ Widget userBodyMenu(BuildContext context,
       (index) {
         return GestureDetector(
           onTap: () {
-            controller.locationPermission().whenComplete(() {
+            controller.locationServices.locationPermission().whenComplete(() {
               Get.toNamed(
                 '/user/catering-list',
                 parameters: {
                   'category': controller.menuItem()[index][0],
                   'itemIcon': controller.menuItem()[index][1],
                   'appbarBanner': controller.menuItem()[index][2],
+                  'index': index.toString(),
                 },
               );
-              
             });
           },
           child: Column(

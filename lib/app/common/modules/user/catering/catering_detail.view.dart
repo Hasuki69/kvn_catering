@@ -182,7 +182,10 @@ Widget cateringDetailBottomAppBar(BuildContext context,
                 cateringDetailBottomBarDropdown(context,
                     controller: controller),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    controller.addFav(
+                        idCat: Get.arguments['catering-data']['id_catering']);
+                  },
                   icon: const Icon(
                     Icons.favorite,
                     size: 36,
@@ -535,9 +538,13 @@ Widget cateringDetailListItem(BuildContext context,
                       () => ReElevatedButton(
                         onPressed: controller.itemCount() > 0
                             ? () {
-                                controller.inputOrder(
-                                    idCat: Get.arguments['catering-data']
-                                        ['id_catering']);
+                                controller.getSelectedMenu();
+                                Get.toNamed(
+                                    '/user/catering-list/detail-payment',
+                                    arguments: {
+                                      'catering-data':
+                                          Get.arguments['catering-data'],
+                                    });
                               }
                             : null,
                         child: ReText(
