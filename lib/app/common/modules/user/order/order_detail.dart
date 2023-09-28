@@ -87,8 +87,12 @@ Widget orderDetailContent(BuildContext context,
               if (snapData[0] != 404) {
                 mapController.driverLocation(
                   LatLng(
-                    snapData[2][0]['langtitude'],
-                    snapData[2][0]['longtitude'],
+                    snapData[2][0]['langtitude'] == 0
+                        ? snapData[2][0]['langtitude'].toDouble()
+                        : snapData[2][0]['langtitude'],
+                    snapData[2][0]['longtitude'] == 0
+                        ? snapData[2][0]['langtitude'].toDouble()
+                        : snapData[2][0]['langtitude'],
                   ),
                 );
                 return Column(

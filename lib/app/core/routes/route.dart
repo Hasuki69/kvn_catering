@@ -1,10 +1,13 @@
 import 'package:get/get.dart';
 import 'package:kvn_catering/app/common/modules/auth/auth.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/budgeting/catering_budgeting.view.dart';
+import 'package:kvn_catering/app/common/modules/catering/budgeting/catering_budgeting_detail.view.dart';
+import 'package:kvn_catering/app/common/modules/catering/budgeting/catering_budgeting_form.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/catering.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/location/catering_location.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/menu/catering_menu.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/notification/catering_notification.view.dart';
+import 'package:kvn_catering/app/common/modules/catering/notification/catering_notification_detail.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/order/catering_order.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/pengantar/catering_pengantar.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/profile/catering_profile.view.dart';
@@ -99,6 +102,11 @@ List<GetPage<dynamic>> getPages = [
     binding: CateringNotificationBinding(),
   ),
   GetPage(
+    name: '/catering/notification-detail',
+    page: () => const CateringNotificationDetailView(),
+    binding: CateringNotificationBinding(),
+  ),
+  GetPage(
     name: '/catering/menu',
     page: () => const CateringMenuView(),
     binding: CateringMenuBinding(),
@@ -114,6 +122,16 @@ List<GetPage<dynamic>> getPages = [
   GetPage(
     name: '/catering/budgeting',
     page: () => const CateringBudgetingView(),
+    binding: CateringBudgetingBinding(),
+  ),
+  GetPage(
+    name: '/catering/budgeting/detail',
+    page: () => const CateringBudgetingDetailView(),
+    binding: CateringBudgetingBinding(),
+  ),
+  GetPage(
+    name: '/catering/budgeting/form',
+    page: () => const CateringBudgetingFormView(),
     binding: CateringBudgetingBinding(),
   ),
   GetPage(

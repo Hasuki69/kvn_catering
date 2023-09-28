@@ -20,118 +20,118 @@ import 'package:kvn_catering/app/common/modules/user/user.controller.dart';
 class SplashBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => SplashController());
+    Get.lazyPut(() => SplashController(), fenix: true);
   }
 }
 
 class AuthBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => AuthController());
+    Get.lazyPut(() => AuthController(), fenix: true);
   }
 }
 
 class UserBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => UserController());
+    Get.lazyPut(() => UserController(), fenix: true);
   }
 }
 
 class CateringBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => CateringController());
+    Get.lazyPut(() => CateringController(), fenix: true);
   }
 }
 
 class DeliveryBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => DeliveryController());
+    Get.lazyPut(() => DeliveryController(), fenix: true);
   }
 }
 
 class UserProfileBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => UserProfileController());
+    Get.lazyPut(() => UserProfileController(), fenix: true);
   }
 }
 
 class CateringProfileBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => CateringProfileController());
+    Get.lazyPut(() => CateringProfileController(), fenix: true);
   }
 }
 
 class CateringNotificationBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => CateringNotificationController());
+    Get.lazyPut(() => CateringNotificationController(), fenix: true);
   }
 }
 
 class CateringListBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => CateringListController());
+    Get.lazyPut(() => CateringListController(), fenix: true);
   }
 }
 
 class OrderBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => OrderController());
+    Get.lazyPut(() => OrderController(), fenix: true);
   }
 }
 
 class ReciptBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => ReciptController());
+    Get.lazyPut(() => ReciptController(), fenix: true);
   }
 }
 
 class GmapBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => GmapController());
+    Get.lazyPut(() => GmapController(), fenix: true);
   }
 }
 
 class CateringMenuBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => CateringMenuController());
+    Get.lazyPut(() => CateringMenuController(), fenix: true);
   }
 }
 
 class CateringLocationBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => CateringLocationController());
+    Get.lazyPut(() => CateringLocationController(), fenix: true);
   }
 }
 
 class CateringBudgetingBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => CateringBudgetingController());
+    Get.lazyPut(() => CateringBudgetingController(), fenix: true);
   }
 }
 
 class CateringPengantarBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => CateringPengantarController());
+    Get.lazyPut(() => CateringPengantarController(), fenix: true);
   }
 }
 
 class CateringOrderBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => CateringOrderController());
+    Get.lazyPut(() => CateringOrderController(), fenix: true);
   }
 }

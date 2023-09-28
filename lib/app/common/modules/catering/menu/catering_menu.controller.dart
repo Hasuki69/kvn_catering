@@ -162,4 +162,50 @@ class CateringMenuController extends GetxController {
       updateCateringMenu(cateringUid: cateringUid);
     }
   }
+
+  void setController({required Map data}) {
+    tecNamaMenu.text = data['nama_menu'];
+    tecHarga.text = data['harga_menu'].toString();
+    tecJamAwal.text = data['jam_pengiriman_awal'];
+    tecJamAkhir.text = data['jam_pengiriman_akhir'];
+  }
+
+  Future<void> updateMenu({required String menuUid}) async {
+    getLoading();
+    var response = await cateringService
+        .catUpdateMenu(
+            catUid: cateringUid,
+            menuUid: menuUid,
+            namaMenu: tecNamaMenu.text,
+            hargaMenu: tecHarga.text,
+            jamAwal: tecJamAwal.text,
+            jamAkhir: tecJamAkhir.text)
+        .whenComplete(() => closeLoading());
+
+    if (response[0] == 200) {
+      Get.back();
+      updateCateringMenu(cateringUid: cateringUid);
+      Get.snackbar(
+        'Status ${response[0]}',
+        response[1],
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } else if (response[0] == 404) {
+      Get.snackbar(
+        'Status ${response[0]}',
+        response[1],
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } else {
+      Get.snackbar(
+        'Status ${response[0]}',
+        response[1],
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+    clearForm();
+  }
 }

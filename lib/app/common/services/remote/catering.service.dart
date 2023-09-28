@@ -135,4 +135,34 @@ class CateringService {
       return '${response.statusCode} Unable to connect to server!';
     }
   }
+
+  // Add to Fav
+  Future catUpdateMenu({
+    required String catUid,
+    required String menuUid,
+    required String namaMenu,
+    required String hargaMenu,
+    required String jamAwal,
+    required String jamAkhir,
+  }) async {
+    var url = Uri.parse(
+      '$apiPath/mn/update-menu',
+    );
+    var response = await http.put(url, body: {
+      'id_catering': catUid,
+      'id_menu': menuUid,
+      'nama_menu': namaMenu,
+      'harga_menu': hargaMenu,
+      'jam_pengiriman_awal': jamAwal,
+      'jam_pengiriman_akhir': jamAkhir,
+    });
+    if (response.statusCode == 200) {
+      var respStatus = json.decode(response.body)['status'];
+      var respMessage = json.decode(response.body)['message'];
+      var respData = json.decode(response.body)['data'];
+      return [respStatus, respMessage, respData];
+    } else {
+      return '${response.statusCode} Unable to connect to server!';
+    }
+  }
 }

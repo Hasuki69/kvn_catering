@@ -14,7 +14,7 @@ class GmapController extends GetxController {
   void onClose() {
     // TODO: implement onClose
     super.onClose();
-    mapController!.dispose();
+    mapController?.dispose();
   }
 
   // ==================== VARIABLES ====================

@@ -231,7 +231,19 @@ Widget cateringMenuListItem(BuildContext context,
                                       ),
                                     ),
                                     TextButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        controller.setController(
+                                            data: snapData[2][index]['menu']
+                                                [indexMenu]);
+                                        Get.dialog(
+                                          menuDialog(context,
+                                              controller: controller,
+                                              menuUid: snapData[2][index]
+                                                      ['menu'][indexMenu]
+                                                  ['id_menu'],
+                                              isEdit: true),
+                                        );
+                                      },
                                       child: ReText(
                                         value: 'Edit',
                                         style: AppStyle().titleSmall.copyWith(
@@ -274,7 +286,7 @@ Widget cateringMenuFAB(BuildContext context,
     backgroundColor: AppColor.accent,
     onPressed: () {
       Get.dialog(
-        addMenuDialog(context, controller: controller),
+        menuDialog(context, controller: controller),
       );
     },
     child: const Icon(
@@ -284,15 +296,21 @@ Widget cateringMenuFAB(BuildContext context,
   );
 }
 
-Widget addMenuDialog(BuildContext context,
-    {required CateringMenuController controller}) {
+Widget menuDialog(
+  BuildContext context, {
+  required CateringMenuController controller,
+  bool isEdit = false,
+  String menuUid = '',
+}) {
   return ReActionDialog(
     onCancel: () {
       controller.clearForm();
       Get.back();
     },
     onConfirm: () {
-      controller.inputMenu();
+      !isEdit
+          ? controller.inputMenu()
+          : controller.updateMenu(menuUid: menuUid);
     },
     title: 'Tambah Menu',
     children: [
@@ -387,34 +405,40 @@ Widget addMenuDialog(BuildContext context,
           );
         },
       ),
-      const SizedBox(
-        height: 16,
-      ),
-      GetBuilder<CateringMenuController>(
-        builder: (controller) {
-          return Row(
-            children: [
-              Expanded(
-                child: Obx(
-                  () => ReText(
-                    value: controller.imageFile(),
-                  ),
-                ),
-              ),
-              ReElevatedButton(
-                onPressed: () {
-                  controller.pickFile();
-                },
-                child: ReText(
-                  value: 'Upload Foto',
-                  style:
-                      AppStyle().titleMedium.copyWith(color: AppColor.onAccent),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
+      if (!isEdit)
+        Column(
+          children: [
+            const SizedBox(
+              height: 16,
+            ),
+            GetBuilder<CateringMenuController>(
+              builder: (controller) {
+                return Row(
+                  children: [
+                    Expanded(
+                      child: Obx(
+                        () => ReText(
+                          value: controller.imageFile(),
+                        ),
+                      ),
+                    ),
+                    ReElevatedButton(
+                      onPressed: () {
+                        controller.pickFile();
+                      },
+                      child: ReText(
+                        value: 'Upload Foto',
+                        style: AppStyle()
+                            .titleMedium
+                            .copyWith(color: AppColor.onAccent),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
     ],
   );
 }
