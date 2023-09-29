@@ -121,4 +121,36 @@ class OrderService {
       return '${response.statusCode} Unable to connect to server!';
     }
   }
+
+  // Read Map Pengantar
+  Future getPengantarLocation({required String uidPengantar}) async {
+    var url = Uri.parse(
+      '$apiPath/PA/read-Maps-pengantar?id_pengantar=$uidPengantar',
+    );
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var respStatus = json.decode(response.body)['status'];
+      var respMessage = json.decode(response.body)['message'];
+      var respData = json.decode(response.body)['data'];
+      return [respStatus, respMessage, respData];
+    } else {
+      return '${response.statusCode} Unable to connect to server!';
+    }
+  }
+
+  // Read Map Pembeli
+  Future getUserLocation({required String uidDetailOrder}) async {
+    var url = Uri.parse(
+      '$apiPath/ORD/read-location-user?id_detail_order=$uidDetailOrder',
+    );
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var respStatus = json.decode(response.body)['status'];
+      var respMessage = json.decode(response.body)['message'];
+      var respData = json.decode(response.body)['data'];
+      return [respStatus, respMessage, respData];
+    } else {
+      return '${response.statusCode} Unable to connect to server!';
+    }
+  }
 }

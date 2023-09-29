@@ -71,6 +71,7 @@ class AuthController extends GetxController
   get session => box.read('session') ?? false;
   get uid => box.read('uid') ?? '';
   get cateringUid => box.read('cateringUid') ?? '';
+  get pengantarUid => box.read('pengantarUid') ?? '';
   get role => box.read('role') ?? 0;
 
   Future<void> pickFile() async {
@@ -88,12 +89,14 @@ class AuthController extends GetxController
     required String uid,
     required int role,
     required String cateringUid,
+    required String pengantarUid,
   }) {
     box.write('session', session);
     box.write('uid', uid);
     box.write('role', role);
 
     box.write('cateringUid', cateringUid);
+    box.write('pengantarUid', pengantarUid);
   }
 
   Future<void> auth() async {
@@ -114,6 +117,7 @@ class AuthController extends GetxController
         uid: response[2]['id_user'],
         role: response[2]['status_user'],
         cateringUid: response[2]['id_catering'],
+        pengantarUid: response[2]['id_pengantar'],
       );
       if (role == 1) {
         Get.offAllNamed('/user');
@@ -163,6 +167,7 @@ class AuthController extends GetxController
           uid: response[2]['id_user'],
           role: response[2]['status_user'],
           cateringUid: response[2]['id_catering'],
+          pengantarUid: response[2]['id_pengantar'],
         );
         role == 1 ? Get.offAllNamed('/user') : regisCatering();
       } else if (response[0] == 404) {

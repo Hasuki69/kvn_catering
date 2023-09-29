@@ -18,16 +18,16 @@ class GmapController extends GetxController {
   }
 
   // ==================== VARIABLES ====================
-  late final GoogleMapController? mapController;
+  GoogleMapController? mapController;
 
   var currentLocation = const LatLng(0.0, 0.0).obs;
   var currentMarker = const Marker(
     markerId: MarkerId('current_marker'),
   ).obs;
 
-  var destinationLocation = const LatLng(0.0, 0.0).obs;
-  var destinationMarker = const Marker(
-    markerId: MarkerId('destination_marker'),
+  var userLocation = const LatLng(0.0, 0.0).obs;
+  var userMarker = const Marker(
+    markerId: MarkerId('user_marker'),
   ).obs;
 
   var driverLocation = const LatLng(0.0, 0.0).obs;
@@ -67,35 +67,6 @@ class GmapController extends GetxController {
 
     await locationPermission();
 
-    final position = await Geolocator.getCurrentPosition();
-
-    currentLocation(
-      LatLng(position.latitude, position.longitude),
-    );
-
-    driverMarker(
-      Marker(
-        markerId: const MarkerId('destination_marker'),
-        position: driverLocation(),
-      ),
-    );
-
-    destinationMarker(
-      Marker(
-        markerId: const MarkerId('destination_marker'),
-        position: destinationLocation(),
-      ),
-    );
-
-    mapController!.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: driverLocation(),
-          zoom: 14.4746,
-        ),
-      ),
-    );
-
     Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.bestForNavigation,
@@ -107,6 +78,14 @@ class GmapController extends GetxController {
         Marker(
           markerId: const MarkerId('current_marker'),
           position: currentLocation(),
+        ),
+      );
+      mapController?.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: currentLocation(),
+            zoom: 14.4746,
+          ),
         ),
       );
     });
@@ -181,5 +160,25 @@ class GmapController extends GetxController {
 
   void setRadius({required double radius}) {
     selectedRadius(radius);
+  }
+
+  void setDriverLocation(LatLng latLng) {
+    driverLocation(latLng);
+    driverMarker(
+      Marker(
+        markerId: const MarkerId('driver_marker'),
+        position: driverLocation(),
+      ),
+    );
+  }
+
+  void setUserLocation(LatLng latLng) {
+    userLocation(latLng);
+    userMarker(
+      Marker(
+        markerId: const MarkerId('user_marker'),
+        position: userLocation(),
+      ),
+    );
   }
 }

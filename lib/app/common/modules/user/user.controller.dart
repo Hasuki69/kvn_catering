@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:kvn_catering/app/common/services/local/location.service.dart';
 
-
 class UserController extends GetxController {
   @override
   void onInit() {
@@ -20,7 +19,6 @@ class UserController extends GetxController {
   // ==================== VARIABLES ====================
   GetStorage box = GetStorage();
   LocationServices locationServices = LocationServices();
-  
 
   var menuItem = [
     [
@@ -67,11 +65,11 @@ class UserController extends GetxController {
   get session => box.read('session') ?? false;
   get uid => box.read('uid') ?? '';
   get cateringUid => box.read('cateringUid') ?? '';
+  get pengantarUid => box.read('pengantarUid') ?? '';
   get role => box.read('role') ?? 0;
 
   void logout() {
     box.erase();
     Get.offAllNamed('/auth');
   }
-
 }

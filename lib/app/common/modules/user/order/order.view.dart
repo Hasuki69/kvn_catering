@@ -160,6 +160,10 @@ Widget orderBodyContent(BuildContext context,
                                         if (!Get.arguments['isHistory'])
                                           IconButton(
                                             onPressed: () {
+                                              controller.getDriverLocation(
+                                                  uidPengantar:
+                                                      menuList[indexItem]
+                                                          ['id_pengantar']);
                                               controller
                                                   .getOrderDetail(
                                                       orderDetailUid: menuList[
@@ -167,7 +171,13 @@ Widget orderBodyContent(BuildContext context,
                                                           ['id_detail_order'])
                                                   .whenComplete(
                                                     () => Get.toNamed(
-                                                        '/user/order/detail'),
+                                                            '/user/order/detail')
+                                                        ?.whenComplete(
+                                                      () {
+                                                        controller.timer
+                                                            ?.cancel();
+                                                      },
+                                                    ),
                                                   );
                                             },
                                             icon: const Icon(

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:kvn_catering/app/common/modules/gmap/gmap.controller.dart';
 import 'package:kvn_catering/app/common/modules/gmap/gmap.view.dart';
 import 'package:kvn_catering/app/common/modules/user/order/order.controller.dart';
 import 'package:kvn_catering/app/common/widgets/custom_button.dart';
@@ -36,7 +34,9 @@ Widget orderDetailBody(BuildContext context,
         width: size.width,
         child: AspectRatio(
           aspectRatio: 3 / 4,
-          child: GmapView(),
+          child: GmapView(
+            isDriver: false,
+          ),
         ),
       ),
       Positioned(
@@ -59,7 +59,6 @@ Widget orderDetailBody(BuildContext context,
 Widget orderDetailContent(BuildContext context,
     {required OrderController controller}) {
   final size = MediaQuery.of(context).size;
-  final mapController = Get.find<GmapController>();
   return Container(
     width: size.width,
     height: size.height * 0.4,
@@ -85,16 +84,6 @@ Widget orderDetailContent(BuildContext context,
             if (snapshot.hasData) {
               List snapData = snapshot.data! as List;
               if (snapData[0] != 404) {
-                mapController.driverLocation(
-                  LatLng(
-                    snapData[2][0]['langtitude'] == 0
-                        ? snapData[2][0]['langtitude'].toDouble()
-                        : snapData[2][0]['langtitude'],
-                    snapData[2][0]['longtitude'] == 0
-                        ? snapData[2][0]['langtitude'].toDouble()
-                        : snapData[2][0]['langtitude'],
-                  ),
-                );
                 return Column(
                   children: [
                     Row(

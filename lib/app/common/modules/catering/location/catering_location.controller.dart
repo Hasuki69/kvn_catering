@@ -29,6 +29,7 @@ class CateringLocationController extends GetxController {
   get session => box.read('session') ?? false;
   get uid => box.read('uid') ?? '';
   get cateringUid => box.read('cateringUid') ?? '';
+  get pengantarUid => box.read('pengantarUid') ?? '';
   get role => box.read('role') ?? 0;
 
   Future setCateringLocation(

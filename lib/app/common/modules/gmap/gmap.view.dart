@@ -7,23 +7,25 @@ import 'package:kvn_catering/app/core/themes/theme.dart';
 class GmapView extends GetView {
   @override
   final GmapController controller = Get.put(GmapController());
-  GmapView({super.key});
+  final bool isDriver;
+  GmapView({super.key, required this.isDriver});
 
   @override
   Widget build(BuildContext context) {
-    return gmapBody(context, controller: controller);
+    return gmapBody(context, controller: controller, isDriver: isDriver);
   }
 }
 
-Widget gmapBody(BuildContext context, {required GmapController controller}) {
+Widget gmapBody(BuildContext context,
+    {required GmapController controller, required bool isDriver}) {
   return Obx(
     () => GoogleMap(
       initialCameraPosition: controller.initialCameraPosition(),
       onMapCreated: controller.onMapCreated,
       zoomControlsEnabled: false,
       markers: {
-        controller.driverMarker(),
         controller.currentMarker(),
+        !isDriver ? controller.driverMarker() : controller.userMarker(),
       },
     ),
   );

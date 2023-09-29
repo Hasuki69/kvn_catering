@@ -45,6 +45,7 @@ class CateringProfileController extends GetxController {
   get session => box.read('session') ?? false;
   get uid => box.read('uid') ?? '';
   get cateringUid => box.read('cateringUid') ?? '';
+  get pengantarUid => box.read('pengantarUid') ?? '';
   get role => box.read('role') ?? 0;
 
   Future<void> getCateringProfile({required String uid}) async {
@@ -52,29 +53,11 @@ class CateringProfileController extends GetxController {
   }
 
   void setControllerValue(var data) {
-    /*
-    waktuPemesanan.value = <List<dynamic>>[
-      ['Harian', false],
-      ['Mingguan', false],
-      ['Bulanan', false],
-    ];
-    */
     ctrlName.text = data[2][0]['nama_catering'];
     ctrlEmail.text = data[2][0]['email_catering'];
     ctrlPhone.text = data[2][0]['telp_catering'];
     ctrlAddress.text = data[2][0]['alamat_catering'];
     ctrlDesc.text = data[2][0]['deskripsi_catering'];
-    /*
-    for (var element in data[2][0]['tipe_pemesanan']) {
-      if (element == 'Harian') {
-        waktuPemesanan[0][1] = true;
-      } else if (element == 'Mingguan') {
-        waktuPemesanan[1][1] = true;
-      } else if (element == 'Bulanan') {
-        waktuPemesanan[2][1] = true;
-      }
-    }
-    */
   }
 
   void disposeTEC() {
@@ -94,14 +77,14 @@ class CateringProfileController extends GetxController {
     //String typePemesanan = addSeparator(waktuPemesanan, '|');
     var response = await profileService
         .updateCateringProfile(
-            cateringUid: cateringUid,
-            cateringName: ctrlName.text,
-            cateringAddress: ctrlAddress.text,
-            cateringPhone: ctrlPhone.text,
-            cateringEmail: ctrlEmail.text,
-            cateringDesc: ctrlDesc.text,
-            //cateringType: typePemesanan,
-            )
+          cateringUid: cateringUid,
+          cateringName: ctrlName.text,
+          cateringAddress: ctrlAddress.text,
+          cateringPhone: ctrlPhone.text,
+          cateringEmail: ctrlEmail.text,
+          cateringDesc: ctrlDesc.text,
+          //cateringType: typePemesanan,
+        )
         .whenComplete(() => closeLoading());
 
     if (response[0] == 200) {
