@@ -140,10 +140,11 @@ class OrderController extends GetxController {
       timer = Timer.periodic(const Duration(seconds: 2), (timer) {
         mapController.setDriverLocation(
           LatLng(
-            double.parse(response[2][0]['langitude']),
-            double.parse(response[2][0]['longitude']),
+            double.parse(response[2][0]['langtitude'].toString()),
+            double.parse(response[2][0]['longtitude'].toString()),
           ),
         );
+        print('Fetch Map...');
       });
     }
   }

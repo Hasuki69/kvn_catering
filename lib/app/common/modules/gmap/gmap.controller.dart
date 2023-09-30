@@ -1,6 +1,11 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:kvn_catering/app/common/services/remote/delivery.service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class GmapController extends GetxController {
@@ -14,11 +19,13 @@ class GmapController extends GetxController {
   void onClose() {
     // TODO: implement onClose
     super.onClose();
-    mapController?.dispose();
+    mapController = Completer();
   }
 
   // ==================== VARIABLES ====================
-  GoogleMapController? mapController;
+  GetStorage box = GetStorage();
+
+  Completer<GoogleMapController> mapController = Completer();
 
   var currentLocation = const LatLng(0.0, 0.0).obs;
   var currentMarker = const Marker(
@@ -51,6 +58,12 @@ class GmapController extends GetxController {
 
   // ==================== FUCTIONS ====================
 
+  get session => box.read('session') ?? false;
+  get uid => box.read('uid') ?? '';
+  get cateringUid => box.read('cateringUid') ?? '';
+  get pengantarUid => box.read('pengantarUid') ?? '';
+  get role => box.read('role') ?? 0;
+
   Future<void> locationPermission() async {
     final PermissionStatus status = await Permission.location.request();
     if (status.isDenied || status.isPermanentlyDenied) {
@@ -63,7 +76,7 @@ class GmapController extends GetxController {
   }
 
   void onMapCreated(GoogleMapController controller) async {
-    mapController = controller;
+    mapController.complete(controller);
 
     await locationPermission();
 
@@ -72,7 +85,7 @@ class GmapController extends GetxController {
         accuracy: LocationAccuracy.bestForNavigation,
         distanceFilter: 0,
       ),
-    ).listen((event) {
+    ).listen((event) async {
       currentLocation(LatLng(event.latitude, event.longitude));
       currentMarker(
         Marker(
@@ -80,19 +93,26 @@ class GmapController extends GetxController {
           position: currentLocation(),
         ),
       );
-      mapController?.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: currentLocation(),
-            zoom: 14.4746,
+      if (pengantarUid != '') {
+        updateLocation(
+            lat: event.latitude.toString(), long: event.longitude.toString());
+      }
+
+      if (mapController.isCompleted) {
+        (await mapController.future).animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: currentLocation(),
+              zoom: 14.4746,
+            ),
           ),
-        ),
-      );
+        );
+      }
     });
   }
 
   void setLocationOnMapCreated(GoogleMapController controller) async {
-    mapController = controller;
+    mapController.complete(controller);
 
     await locationPermission();
 
@@ -102,7 +122,7 @@ class GmapController extends GetxController {
       LatLng(position.latitude, position.longitude),
     );
 
-    mapController!.animateCamera(
+    (await mapController.future).animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: selectedLocation(),
@@ -116,7 +136,7 @@ class GmapController extends GetxController {
         accuracy: LocationAccuracy.bestForNavigation,
         distanceFilter: 0,
       ),
-    ).listen((event) {
+    ).listen((event) async {
       if (isMyLocation()) {
         selectedLocation(LatLng(event.latitude, event.longitude));
         selectedMarker(
@@ -126,7 +146,7 @@ class GmapController extends GetxController {
           ),
         );
         if (co < 1) {
-          mapController!.animateCamera(
+          (await mapController.future).animateCamera(
             CameraUpdate.newCameraPosition(
               CameraPosition(
                 target: selectedLocation(),
@@ -140,7 +160,7 @@ class GmapController extends GetxController {
     });
   }
 
-  void setSelectedLocation(LatLng latLng) {
+  void setSelectedLocation(LatLng latLng) async {
     selectedLocation(latLng);
     selectedMarker(
       Marker(
@@ -148,7 +168,7 @@ class GmapController extends GetxController {
         position: selectedLocation(),
       ),
     );
-    mapController!.animateCamera(
+    (await mapController.future).animateCamera(
       CameraUpdate.newCameraPosition(
         CameraPosition(
           target: selectedLocation(),
@@ -180,5 +200,14 @@ class GmapController extends GetxController {
         position: userLocation(),
       ),
     );
+  }
+
+  Future<void> updateLocation({
+    required String lat,
+    required String long,
+  }) async {
+    var response = await DeliveryService.updateMap(
+        uidPengantar: pengantarUid, lat: lat, long: long);
+    debugPrint(response.toString());
   }
 }

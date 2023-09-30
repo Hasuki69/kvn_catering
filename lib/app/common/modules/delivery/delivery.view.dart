@@ -52,7 +52,9 @@ Widget deliveryBody(BuildContext context,
     padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [deliveryBodyContent(context, controller: controller)],
+      children: [
+        deliveryBodyContent(context, controller: controller),
+      ],
     ),
   );
 }
@@ -65,7 +67,6 @@ Widget deliveryBodyContent(BuildContext context,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List snapData = snapshot.data! as List;
-
           if (snapData[0] != 404) {
             return ReListView(
               itemCount: snapData[2].length,
