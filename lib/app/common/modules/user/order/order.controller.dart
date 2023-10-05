@@ -67,6 +67,14 @@ class OrderController extends GetxController {
     }
   }
 
+  Future<void> updateOrder({required String date}) async {
+    if (!Get.arguments['isHistory']) {
+      futureOrder.value = orderService.getOrder(uid: uid, date: date);
+    } else {
+      futureOrder.value = orderService.getHistory(uid: uid, date: date);
+    }
+  }
+
   Future<void> getOrderDetail({required String orderDetailUid}) async {
     futureOrderDetail =
         orderService.getOrderDetail(orderDetailUid: orderDetailUid).obs;
@@ -101,6 +109,7 @@ class OrderController extends GetxController {
         .whenComplete(() => closeLoading());
     clearTEC();
     if (response[0] == 200) {
+      updateOrder(date: selectedDate1());
       getOrder(date: selectedDate1());
       Get.snackbar(
         'Status ${response[0]}',
@@ -144,7 +153,7 @@ class OrderController extends GetxController {
             double.parse(response[2][0]['longtitude'].toString()),
           ),
         );
-        print('Fetch Map...');
+        debugPrint('Fetch Map...');
       });
     }
   }

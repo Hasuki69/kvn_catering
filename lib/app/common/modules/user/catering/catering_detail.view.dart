@@ -167,6 +167,7 @@ Widget cateringDetailAppbarCard(BuildContext context,
 
 Widget cateringDetailBottomAppBar(BuildContext context,
     {required CateringListController controller}) {
+  print(Get.arguments['catering-data']['favorite']);
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -183,13 +184,17 @@ Widget cateringDetailBottomAppBar(BuildContext context,
                     controller: controller),
                 IconButton(
                   onPressed: () {
-                    controller.addFav(
-                        idCat: Get.arguments['catering-data']['id_catering']);
+                    if (Get.arguments['catering-data']['favorite'] == 0) {
+                      controller.addFav(
+                          idCat: Get.arguments['catering-data']['id_catering']);
+                    }
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.favorite,
                     size: 36,
-                    color: AppColor.disable,
+                    color: Get.arguments['catering-data']['favorite'] == 0
+                        ? AppColor.disable
+                        : Colors.amber,
                   ),
                 ),
               ],

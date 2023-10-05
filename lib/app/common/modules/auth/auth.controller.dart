@@ -163,13 +163,14 @@ class AuthController extends GetxController
           .whenComplete(() => closeLoading());
 
       if (response[0] == 200) {
-        setSession(
-          uid: response[2]['id_user'],
-          role: response[2]['status_user'],
-          cateringUid: response[2]['id_catering'],
-          pengantarUid: response[2]['id_pengantar'],
-        );
-        role == 1 ? Get.offAllNamed('/user') : regisCatering();
+        // printController();
+        if (tempRole == '1') {
+          Get.snackbar("Sukses", "Silahkan masuk melalui halaman Login!");
+
+          clearTextControllers();
+        } else {
+          regisCatering();
+        }
       } else if (response[0] == 404) {
         Get.snackbar(
           'Status ${response[0]}',
@@ -205,7 +206,9 @@ class AuthController extends GetxController
         .whenComplete(() => closeLoading());
 
     if (response[0] == 200) {
-      Get.offAllNamed('/catering');
+      // printController();
+      Get.snackbar("Sukses", "Silahkan masuk melalui halaman Login!");
+      clearTextControllers();
     } else if (response[0] == 404) {
       Get.snackbar(
         'Status ${response[0]}',
@@ -257,5 +260,26 @@ class AuthController extends GetxController
     ctrlCateringPhone.clear();
     ctrlCateringEmail.clear();
     ctrlCateringDescription.clear();
+
+    imageFile('');
+    imagePath('');
   }
+
+  // void printController() {
+  //   print('user ${ctrlUsername.text}');
+  //   print('pass ${ctrlPassword.text}');
+
+  //   print('name ${ctrlName.text}');
+  //   print('telp ${ctrlTelp.text}');
+  //   print('email ${ctrlEmail.text}');
+
+  //   print('catname ${ctrlCateringName.text}');
+  //   print('cataddress ${ctrlCateringAddress.text}');
+  //   print('catphone ${ctrlCateringPhone.text}');
+  //   print('catemail ${ctrlCateringEmail.text}');
+  //   print('catDesc ${ctrlCateringDescription.text}');
+
+  //   print(imageFile());
+  //   print(imagePath());
+  // }
 }
