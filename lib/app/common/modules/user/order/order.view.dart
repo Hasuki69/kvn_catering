@@ -121,130 +121,140 @@ Widget orderBodyContent(BuildContext context,
                   var menuList = !Get.arguments['isHistory']
                       ? snapData[2][index]['menu_order_dipesan']
                       : snapData[2][index]['history_order'];
-                  return ReElevation(
-                    child: Card(
-                      child: Theme(
-                        data: Theme.of(context)
-                            .copyWith(dividerColor: Colors.transparent),
-                        child: ExpansionTile(
-                          title: ReText(
-                            value: '${snapData[2][index]['tanggal_menu']}',
-                            style: AppStyle().titleMedium,
-                          ),
-                          children: List.generate(
-                            menuList.length,
-                            (indexItem) => Column(
-                              children: [
-                                if (indexItem == 0) const Divider(),
-                                ListTile(
-                                    leading: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        ReText(
-                                          value:
-                                              '${menuList[indexItem]['nama_menu']}',
-                                          style: AppStyle().bodyMedium,
-                                        ),
-                                        ReText(
-                                          value: CurrencyFormat.toIdr(
-                                              int.parse(menuList[indexItem]
-                                                  ['harga_menu']),
-                                              0),
-                                          style: AppStyle().bodySmall,
-                                        ),
-                                      ],
-                                    ),
-                                    trailing: Column(
-                                      children: [
-                                        if (!Get.arguments['isHistory'])
-                                          IconButton(
-                                            onPressed: () {
-                                              controller.getDriverLocation(
-                                                  uidPengantar:
-                                                      menuList[indexItem]
-                                                          ['id_pengantar']);
-                                              controller
-                                                  .getOrderDetail(
-                                                      orderDetailUid: menuList[
-                                                              indexItem]
-                                                          ['id_detail_order'])
-                                                  .whenComplete(
-                                                    () => Get.toNamed(
-                                                            '/user/order/detail')
-                                                        ?.whenComplete(
-                                                      () {
-                                                        controller.timer
-                                                            ?.cancel();
-                                                      },
-                                                    ),
-                                                  );
-                                            },
-                                            icon: const Icon(
-                                              Icons.arrow_forward_ios,
-                                              color: AppColor.accent,
-                                              size: 16,
-                                            ),
+                  if (menuList != null) {
+                    return ReElevation(
+                      child: Card(
+                        child: Theme(
+                          data: Theme.of(context)
+                              .copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            title: ReText(
+                              value: '${snapData[2][index]['tanggal_menu']}',
+                              style: AppStyle().titleMedium,
+                            ),
+                            children: List.generate(
+                              menuList.length,
+                              (indexItem) => Column(
+                                children: [
+                                  if (indexItem == 0) const Divider(),
+                                  ListTile(
+                                      leading: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ReText(
+                                            value:
+                                                '${menuList[indexItem]['nama_menu']}',
+                                            style: AppStyle().bodyMedium,
                                           ),
-                                        if (Get.arguments['isHistory'])
-                                          Wrap(
-                                            alignment: WrapAlignment.center,
-                                            crossAxisAlignment:
-                                                WrapCrossAlignment.center,
-                                            children: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Get.dialog(
-                                                    ratingDialog(
-                                                      context,
-                                                      controller: controller,
-                                                      orderDetailUid: menuList[
-                                                              indexItem]
-                                                          ['id_detail_order'],
-                                                      idCatering:
-                                                          menuList[indexItem]
-                                                              ['id_catering'],
-                                                    ),
-                                                  );
-                                                },
-                                                child: ReText(
-                                                  value: 'Rate & Review',
-                                                  style: AppStyle()
-                                                      .titleSmall
-                                                      .copyWith(
-                                                          color:
-                                                              AppColor.accent),
-                                                ),
+                                          ReText(
+                                            value: CurrencyFormat.toIdr(
+                                                int.parse(menuList[indexItem]
+                                                    ['harga_menu']),
+                                                0),
+                                            style: AppStyle().bodySmall,
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: Column(
+                                        children: [
+                                          if (!Get.arguments['isHistory'])
+                                            IconButton(
+                                              onPressed: () {
+                                                controller.getDriverLocation(
+                                                    uidPengantar:
+                                                        menuList[indexItem]
+                                                            ['id_pengantar']);
+                                                controller
+                                                    .getOrderDetail(
+                                                        orderDetailUid: menuList[
+                                                                indexItem]
+                                                            ['id_detail_order'])
+                                                    .whenComplete(
+                                                      () => Get.toNamed(
+                                                              '/user/order/detail')
+                                                          ?.whenComplete(
+                                                        () {
+                                                          controller.timer
+                                                              ?.cancel();
+                                                        },
+                                                      ),
+                                                    );
+                                              },
+                                              icon: const Icon(
+                                                Icons.arrow_forward_ios,
+                                                color: AppColor.accent,
+                                                size: 16,
                                               ),
-                                              Wrap(
-                                                alignment: WrapAlignment.center,
-                                                crossAxisAlignment:
-                                                    WrapCrossAlignment.center,
-                                                children: [
-                                                  const Icon(Icons.star,
-                                                      color: AppColor.accent),
-                                                  ReText(
-                                                    value: menuList[indexItem]
-                                                            ['rating']
-                                                        .toString(),
-                                                    style:
-                                                        AppStyle().titleSmall,
+                                            ),
+                                          if (Get.arguments['isHistory'])
+                                            Wrap(
+                                              alignment: WrapAlignment.center,
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.center,
+                                              children: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Get.dialog(
+                                                      ratingDialog(
+                                                        context,
+                                                        controller: controller,
+                                                        orderDetailUid: menuList[
+                                                                indexItem]
+                                                            ['id_detail_order'],
+                                                        idCatering:
+                                                            menuList[indexItem]
+                                                                ['id_catering'],
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: ReText(
+                                                    value: 'Rate & Review',
+                                                    style: AppStyle()
+                                                        .titleSmall
+                                                        .copyWith(
+                                                            color: AppColor
+                                                                .accent),
                                                   ),
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                      ],
-                                    )),
-                                if (indexItem < menuList.length - 1)
-                                  const Divider(),
-                              ],
+                                                ),
+                                                Wrap(
+                                                  alignment:
+                                                      WrapAlignment.center,
+                                                  crossAxisAlignment:
+                                                      WrapCrossAlignment.center,
+                                                  children: [
+                                                    const Icon(Icons.star,
+                                                        color: AppColor.accent),
+                                                    ReText(
+                                                      value: menuList[indexItem]
+                                                              ['rating']
+                                                          .toString(),
+                                                      style:
+                                                          AppStyle().titleSmall,
+                                                    ),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                        ],
+                                      )),
+                                  if (indexItem < menuList.length - 1)
+                                    const Divider(),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    return Center(
+                      child: ReText(
+                        value: 'No Data',
+                        style: AppStyle().titleMedium,
+                      ),
+                    );
+                  }
                 },
               );
             } else {

@@ -167,7 +167,6 @@ Widget cateringDetailAppbarCard(BuildContext context,
 
 Widget cateringDetailBottomAppBar(BuildContext context,
     {required CateringListController controller}) {
-  print(Get.arguments['catering-data']['favorite']);
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [

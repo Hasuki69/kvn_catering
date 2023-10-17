@@ -1,6 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:kvn_catering/app/common/modules/user/user.controller.dart';
 import 'package:kvn_catering/app/common/modules/user/user_sidebar.view.dart';
@@ -65,11 +64,6 @@ Widget userBody(BuildContext context, {required UserController controller}) {
           padding: const EdgeInsets.symmetric(horizontal: 32),
         ),
         userBodyBanner(context, controller: controller),
-        ReText(
-          value: 'Terbaru',
-          style: AppStyle().headingSmall,
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-        ),
       ],
     ),
   );
