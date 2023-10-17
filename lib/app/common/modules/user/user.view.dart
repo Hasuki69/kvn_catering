@@ -70,7 +70,6 @@ Widget userBody(BuildContext context, {required UserController controller}) {
           style: AppStyle().headingSmall,
           padding: const EdgeInsets.symmetric(horizontal: 32),
         ),
-        userBodyRecentHistory(context, controller: controller),
       ],
     ),
   );
@@ -207,87 +206,6 @@ Widget userBodyBanner(BuildContext context,
           ),
         ),
       ],
-    ),
-  );
-}
-
-Widget userBodyRecentHistory(BuildContext context,
-    {required UserController controller}) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(
-      vertical: 8,
-      horizontal: 24,
-    ),
-    child: ReElevation(
-      child: Card(
-        clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: AppColor.accent.withOpacity(0.6),
-            width: 1,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ReText(
-                value: 'Catering Name',
-                style: AppStyle().titleLarge,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ReText(
-                          value: '13-11-2022',
-                          style: AppStyle().captionMedium,
-                        ),
-                        ReText(
-                          value: 'Nama Makanan',
-                          style: AppStyle().bodyLarge,
-                        ),
-                        ReText(
-                          value: '26.000',
-                          style: AppStyle().bodyMedium,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Card(
-                      child: Image.asset(
-                        controller.bannerItem()[0],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Divider(
-                color: AppColor.accent.withOpacity(0.4),
-              ),
-              RatingBar.builder(
-                minRating: 1,
-                direction: Axis.horizontal,
-                itemCount: 5,
-                itemPadding: const EdgeInsets.symmetric(horizontal: 4),
-                glow: false,
-                itemBuilder: (context, _) => const Icon(
-                  Icons.star,
-                  color: AppColor.accent,
-                ),
-                onRatingUpdate: (rating) {},
-              ),
-            ],
-          ),
-        ),
-      ),
     ),
   );
 }

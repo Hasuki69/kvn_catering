@@ -16,7 +16,7 @@ class OrderController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    getOrder(date: selectedDate1());
+    getOrder();
   }
 
   @override
@@ -57,9 +57,10 @@ class OrderController extends GetxController {
     });
 
     selectedDate1.value = DateFormat('dd-MM-yyyy').format(selectedDate);
+    updateOrder(date: selectedDate1());
   }
 
-  Future<void> getOrder({required String date}) async {
+  Future<void> getOrder({String date = ''}) async {
     if (!Get.arguments['isHistory']) {
       futureOrder = orderService.getOrder(uid: uid, date: date).obs;
     } else {
@@ -67,7 +68,7 @@ class OrderController extends GetxController {
     }
   }
 
-  Future<void> updateOrder({required String date}) async {
+  Future<void> updateOrder({String date = ''}) async {
     if (!Get.arguments['isHistory']) {
       futureOrder.value = orderService.getOrder(uid: uid, date: date);
     } else {

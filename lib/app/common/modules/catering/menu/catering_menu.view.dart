@@ -314,9 +314,14 @@ Widget menuDialog(
     },
     title: 'Tambah Menu',
     children: [
-      ReText(
-        value: 'Tanggal: ${controller.currDate1()}',
-        style: AppStyle().titleMedium,
+      TextButton(
+        onPressed: () {
+          controller.callDatePickerInput(context);
+        },
+        child: ReText(
+          value: 'Tanggal: ${controller.currDate1()}',
+          style: AppStyle().titleMedium,
+        ),
       ),
       const SizedBox(
         width: 8,

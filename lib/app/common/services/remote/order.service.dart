@@ -6,7 +6,7 @@ class OrderService {
   // Get Order
   Future getOrder({required String uid, required String date}) async {
     var url = Uri.parse(
-      '$apiPath/ORD/show-order-menu?id=$uid',
+      '$apiPath/ORD/show-order-menu?id=$uid&tanggal_menu=$date',
     );
     var response = await http.get(url);
     if (response.statusCode == 200) {
@@ -83,7 +83,7 @@ class OrderService {
   // Get History
   Future getHistory({required String uid, required String date}) async {
     var url = Uri.parse(
-      '$apiPath/ORD/history-order?id_user=$uid',
+      '$apiPath/ORD/history-order?id_user=$uid&tanggal_menu=$date',
     );
     var response = await http.get(url);
     if (response.statusCode == 200) {

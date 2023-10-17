@@ -80,6 +80,14 @@ class CateringMenuController extends GetxController {
     updateCateringMenu(cateringUid: cateringUid);
   }
 
+  Future<void> callDatePickerInput(BuildContext context) async {
+    await datePicker(context, selected: currDate).then((value) {
+      currDate = value;
+    });
+
+    currDate1.value = DateFormat('dd-MM-yyyy').format(currDate);
+  }
+
   Future<void> pickFile() async {
     var result = await filePicker();
     if (result == null) {
