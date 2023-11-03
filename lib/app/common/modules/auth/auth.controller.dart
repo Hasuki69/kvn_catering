@@ -66,6 +66,8 @@ class AuthController extends GetxController
   var imagePath = ''.obs;
   var imageFile = ''.obs;
 
+  var tempUid = '';
+
   // ==================== FUCTIONS ====================
 
   get session => box.read('session') ?? false;
@@ -164,8 +166,11 @@ class AuthController extends GetxController
 
       if (response[0] == 200) {
         // printController();
+        tempUid = response[2]['id_user'];
+
         if (tempRole == '1') {
-          Get.snackbar("Sukses", "Silahkan masuk melalui halaman Login!");
+          await login();
+          // Get.snackbar("Sukses", "Silahkan masuk melalui halaman Login!");
 
           clearTextControllers();
         } else {
@@ -194,7 +199,7 @@ class AuthController extends GetxController
     String typePemesanan = addSeparator(waktuPemesanan, '|');
     var response = await authService
         .regisCatering(
-          uid: uid,
+          uid: tempUid,
           name: ctrlCateringName.text,
           email: ctrlCateringEmail.text,
           phone: ctrlCateringPhone.text,
@@ -207,7 +212,9 @@ class AuthController extends GetxController
 
     if (response[0] == 200) {
       // printController();
-      Get.snackbar("Sukses", "Silahkan masuk melalui halaman Login!");
+      await login();
+
+      // Get.snackbar("Sukses", "Silahkan masuk melalui halaman Login!");
       clearTextControllers();
     } else if (response[0] == 404) {
       Get.snackbar(
