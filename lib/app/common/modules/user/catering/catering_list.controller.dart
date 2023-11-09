@@ -159,7 +159,8 @@ class CateringListController extends GetxController {
   }
 
   Future<void> callDatePicker(BuildContext context) async {
-    await datePicker(context, selected: selectedDate).then((value) {
+    await datePicker(context, selected: selectedDate, firstDate: DateTime.now())
+        .then((value) {
       selectedDate = value;
     });
 

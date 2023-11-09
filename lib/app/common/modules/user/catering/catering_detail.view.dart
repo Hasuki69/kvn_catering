@@ -183,10 +183,8 @@ Widget cateringDetailBottomAppBar(BuildContext context,
                     controller: controller),
                 IconButton(
                   onPressed: () {
-                    if (Get.arguments['catering-data']['favorite'] == 0) {
-                      controller.addFav(
-                          idCat: Get.arguments['catering-data']['id_catering']);
-                    }
+                    controller.addFav(
+                        idCat: Get.arguments['catering-data']['id_catering']);
                   },
                   icon: Icon(
                     Icons.favorite,
