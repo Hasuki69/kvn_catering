@@ -158,4 +158,35 @@ class OrderController extends GetxController {
       });
     }
   }
+
+  Future<void> confirmOrder(
+      {required String uid, required String idDetailOrder}) async {
+    var response = await orderService
+        .confirmOrder(uid: uid, idDetailOrder: idDetailOrder)
+        .whenComplete(() => closeLoading());
+    if (response[0] == 200) {
+      Get.back();
+      Get.back();
+      Get.snackbar(
+        'Status ${response[0]}',
+        response[1],
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } else if (response[0] == 404) {
+      Get.snackbar(
+        'Status ${response[0]}',
+        response[1],
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } else {
+      Get.snackbar(
+        'Status ${response[0]}',
+        response[1],
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
 }

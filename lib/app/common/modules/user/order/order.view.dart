@@ -172,8 +172,14 @@ Widget orderBodyContent(BuildContext context,
                                                             ['id_detail_order'])
                                                     .whenComplete(
                                                       () => Get.toNamed(
-                                                              '/user/order/detail')
-                                                          ?.whenComplete(
+                                                          '/user/order/detail',
+                                                          arguments: {
+                                                            'id_detail_order':
+                                                                menuList[
+                                                                        indexItem]
+                                                                    [
+                                                                    'id_detail_order']
+                                                          })?.whenComplete(
                                                         () {
                                                           controller.timer
                                                               ?.cancel();

@@ -168,6 +168,20 @@ Widget orderDetailContent(BuildContext context,
                         ],
                       ),
                     ),
+                    ReElevatedButton(
+                      onPressed: () {
+                        controller.confirmOrder(
+                            uid: controller.uid,
+                            idDetailOrder: Get.arguments['id_detail_order']);
+                      },
+                      child: ReText(
+                        value: 'Confirm',
+                        style: AppStyle()
+                            .titleMedium
+                            .copyWith(color: Colors.white),
+                        maxLines: 3,
+                      ),
+                    ),
                   ],
                 );
               } else {

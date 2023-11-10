@@ -153,4 +153,24 @@ class OrderService {
       return '${response.statusCode} Unable to connect to server!';
     }
   }
+
+  // Confirm Order
+  Future confirmOrder(
+      {required String uid, required String idDetailOrder}) async {
+    var url = Uri.parse(
+      '$apiPath/ORD/confirm-order',
+    );
+    var response = await http.put(url, body: {
+      'id': uid,
+      'id_detail_order': idDetailOrder,
+    });
+    if (response.statusCode == 200) {
+      var respStatus = json.decode(response.body)['status'];
+      var respMessage = json.decode(response.body)['message'];
+      var respData = json.decode(response.body)['data'];
+      return [respStatus, respMessage, respData];
+    } else {
+      return '${response.statusCode} Unable to connect to server!';
+    }
+  }
 }
