@@ -159,6 +159,9 @@ List<GetPage<dynamic>> getPages = [
   GetPage(
     name: '/delivery/detail',
     page: () => const DeliveryDetailView(),
-    binding: DeliveryBinding(),
+    bindings: [
+      DeliveryBinding(),
+      GmapBinding(),
+    ],
   ),
 ];

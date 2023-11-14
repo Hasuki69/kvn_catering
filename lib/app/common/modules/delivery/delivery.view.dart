@@ -71,7 +71,7 @@ Widget deliveryBodyContent(BuildContext context,
             return ReListView(
               itemCount: snapData[2].length,
               itemBuilder: (context, index) {
-                var menuList = snapData[2][index]['menu_order_dipesan'];
+                var menuList = snapData[2][index]['menu_order_dipesan'] ?? [];
                 return ReElevation(
                   child: Card(
                     child: Theme(
@@ -105,18 +105,39 @@ Widget deliveryBodyContent(BuildContext context,
                                     ),
                                   ],
                                 ),
-                                trailing: IconButton(
-                                  onPressed: () {
-                                    controller.getPembeliLocation(
-                                        uidDetailOrder: menuList[indexItem]
-                                            ['id_detail_order']);
-                                    Get.toNamed('/delivery/detail');
-                                  },
-                                  icon: const Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: AppColor.accent,
-                                    size: 16,
-                                  ),
+                                trailing: Wrap(
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        controller.confirmOrder(
+                                            idDetailOrder: menuList[indexItem]
+                                                ['id_detail_order']);
+                                      },
+                                      child: const Text(
+                                        'Confirm',
+                                        style: TextStyle(color: Colors.amber),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 16,
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        controller.getPembeliLocation(
+                                            uidDetailOrder: menuList[indexItem]
+                                                ['id_detail_order']);
+                                        Get.toNamed('/delivery/detail')
+                                            ?.whenComplete(() => Get.delete(
+                                                tag: 'gmap_controller',
+                                                force: true));
+                                      },
+                                      icon: const Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: AppColor.accent,
+                                        size: 16,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                               if (indexItem < menuList.length - 1)

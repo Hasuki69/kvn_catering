@@ -20,12 +20,15 @@ class GmapController extends GetxController {
     // TODO: implement onClose
     super.onClose();
     mapController = Completer();
+    streamSubscription?.cancel();
   }
 
   // ==================== VARIABLES ====================
   GetStorage box = GetStorage();
 
   Completer<GoogleMapController> mapController = Completer();
+
+  StreamSubscription? streamSubscription;
 
   var currentLocation = const LatLng(0.0, 0.0).obs;
   var currentMarker = const Marker(
@@ -80,7 +83,7 @@ class GmapController extends GetxController {
 
     await locationPermission();
 
-    Geolocator.getPositionStream(
+    streamSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.bestForNavigation,
         distanceFilter: 0,

@@ -4,11 +4,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kvn_catering/app/common/modules/gmap/gmap.controller.dart';
 import 'package:kvn_catering/app/core/themes/theme.dart';
 
-class GmapView extends GetView {
-  @override
-  final GmapController controller = Get.put(GmapController());
+class GmapView extends GetView<GmapController> {
   final bool isDriver;
-  GmapView({super.key, required this.isDriver});
+  const GmapView({super.key, required this.isDriver});
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +29,9 @@ Widget gmapBody(BuildContext context,
   );
 }
 
-class GmapSetLocationView extends GetView {
+class GmapSetLocationView extends GetView<GmapController> {
   @override
-  final GmapController controller = Get.put(GmapController());
-  GmapSetLocationView({super.key});
+  const GmapSetLocationView({super.key});
 
   @override
   Widget build(BuildContext context) {

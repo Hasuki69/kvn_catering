@@ -126,12 +126,11 @@ Widget cateringDetailAppbarCard(BuildContext context,
               ),
               Expanded(
                 flex: 5,
-                child: Obx(
-                  () => ReText(
-                    value: controller.catAddress(),
-                    style: AppStyle().bodyLarge,
-                    maxLines: 3,
-                  ),
+                child: ReText(
+                  value: Get.arguments['catering-data']['alamat_catering'] ??
+                      'Catering Address',
+                  style: AppStyle().bodyLarge,
+                  maxLines: 3,
                 ),
               ),
             ],
