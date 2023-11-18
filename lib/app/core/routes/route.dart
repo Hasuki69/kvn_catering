@@ -60,15 +60,15 @@ List<GetPage<dynamic>> getPages = [
   GetPage(
     name: '/user/order',
     page: () => const OrderView(),
-    bindings: [
-      OrderBinding(),
-      GmapBinding(),
-    ],
+    binding: OrderBinding(),
   ),
   GetPage(
     name: '/user/order/detail',
     page: () => const OrderDetailView(),
-    binding: OrderBinding(),
+    bindings: [
+      OrderBinding(),
+      GmapBinding(),
+    ],
   ),
   GetPage(
     name: '/user/catering-list',
@@ -151,10 +151,7 @@ List<GetPage<dynamic>> getPages = [
   GetPage(
     name: '/delivery',
     page: () => const DeliveryView(),
-    bindings: [
-      DeliveryBinding(),
-      GmapBinding(),
-    ],
+    binding: DeliveryBinding(),
   ),
   GetPage(
     name: '/delivery/detail',

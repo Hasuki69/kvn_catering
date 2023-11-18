@@ -123,15 +123,14 @@ Widget deliveryBodyContent(BuildContext context,
                                     ),
                                     IconButton(
                                       onPressed: () {
-                                        controller.getPembeliLocation(
-                                            uidDetailOrder: menuList[indexItem]
-                                                ['id_detail_order']);
-                                        Get.toNamed('/delivery/detail')!
-                                            .whenComplete(() {
-                                          controller
-                                              .mapController.streamSubscription!
-                                              .cancel();
-                                        });
+                                        Get.toNamed(
+                                          '/delivery/detail',
+                                          arguments: {
+                                            'id_detail_order':
+                                                menuList[indexItem]
+                                                    ['id_detail_order']
+                                          },
+                                        );
                                       },
                                       icon: const Icon(
                                         Icons.arrow_forward_ios,

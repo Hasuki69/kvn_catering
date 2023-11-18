@@ -1,32 +1,40 @@
 import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:kvn_catering/app/common/services/remote/delivery.service.dart';
+import 'package:kvn_catering/app/common/services/remote/order.service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class GmapController extends GetxController {
   @override
-  void onInit() {
+  void onInit() async {
     // TODO: implement onInit
     super.onInit();
+    customDriverMarker = await getBytesFromAsset(
+      path: 'lib/assets/icons/driver-1.png',
+      width: 100,
+    );
   }
 
   @override
   void onClose() {
     // TODO: implement onClose
     super.onClose();
-    mapController = Completer();
+    mapController?.dispose();
     stopListening();
   }
 
   // ==================== VARIABLES ====================
   GetStorage box = GetStorage();
 
-  Completer<GoogleMapController> mapController = Completer();
+  GoogleMapController? mapController;
 
   StreamSubscription? streamSubscription;
 
@@ -56,8 +64,9 @@ class GmapController extends GetxController {
   ).obs;
   var selectedRadius = 100.0.obs;
 
-  var isMyLocation = true.obs;
-  var co = 0;
+  var isMyLocation = true;
+
+  var firstZoom = true;
 
   // ==================== FUCTIONS ====================
 
@@ -66,6 +75,19 @@ class GmapController extends GetxController {
   get cateringUid => box.read('cateringUid') ?? '';
   get pengantarUid => box.read('pengantarUid') ?? '';
   get role => box.read('role') ?? 0;
+
+  Uint8List? customDriverMarker;
+
+  Future<Uint8List> getBytesFromAsset(
+      {required String path, required int width}) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+  }
 
   Future<void> locationPermission() async {
     final PermissionStatus status = await Permission.location.request();
@@ -79,9 +101,15 @@ class GmapController extends GetxController {
   }
 
   void onMapCreated(GoogleMapController controller) async {
-    mapController.complete(controller);
-
+    mapController = controller;
     await locationPermission();
+    if (role == 1) {
+      getDriverLocation(uidPengantar: Get.arguments['id_pengantar']!);
+    } else if (role == 2) {
+      // Do Nothing!
+    } else {
+      getPembeliLocation(uidDetailOrder: Get.arguments['id_detail_order']!);
+    }
 
     streamPos();
   }
@@ -93,29 +121,45 @@ class GmapController extends GetxController {
         distanceFilter: 0,
       ),
     ).listen((event) async {
-      print('Listening on Location');
+      debugPrint('Listening on Location');
       currentLocation(LatLng(event.latitude, event.longitude));
       currentMarker(
         Marker(
-          markerId: const MarkerId('current_marker'),
-          position: currentLocation(),
-        ),
+            markerId: const MarkerId('current_marker'),
+            position: currentLocation(),
+            icon: role == 3
+                ? BitmapDescriptor.fromBytes(customDriverMarker!)
+                : BitmapDescriptor.defaultMarker),
       );
-      if (pengantarUid != '' && mapController.isCompleted) {
+      if (firstZoom) {
+        mapController?.animateCamera(CameraUpdate.zoomTo(
+          14.4746,
+        ));
+        firstZoom = false;
+      }
+      if (role == 1) {
+        getDriverLocation(uidPengantar: Get.arguments['id_pengantar']!);
+      } else if (role == 2) {
+        // Do Nothing!
+      } else {
         updateLocation(
-            lat: event.latitude.toString(), long: event.longitude.toString());
+          lat: currentLocation().latitude.toString(),
+          long: currentLocation().longitude.toString(),
+        );
+        debugPrint(
+            'Updated location\nLat: ${currentLocation().latitude}\nLong: ${currentLocation().longitude}');
       }
 
-      if (mapController.isCompleted) {
-        (await mapController.future).animateCamera(
+      await mapController?.getZoomLevel().then((value) {
+        mapController?.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
-              target: currentLocation(),
-              zoom: 14.4746,
+              target: role == 3 ? currentLocation() : driverLocation(),
+              zoom: value,
             ),
           ),
         );
-      }
+      });
     });
   }
 
@@ -126,32 +170,16 @@ class GmapController extends GetxController {
   }
 
   void setLocationOnMapCreated(GoogleMapController controller) async {
-    mapController.complete(controller);
-
+    mapController = controller;
     await locationPermission();
 
-    final position = await Geolocator.getCurrentPosition();
-
-    selectedLocation(
-      LatLng(position.latitude, position.longitude),
-    );
-
-    (await mapController.future).animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: selectedLocation(),
-          zoom: 14.4746,
-        ),
-      ),
-    );
-
-    Geolocator.getPositionStream(
+    streamSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.bestForNavigation,
         distanceFilter: 0,
       ),
     ).listen((event) async {
-      if (isMyLocation()) {
+      if (isMyLocation) {
         selectedLocation(LatLng(event.latitude, event.longitude));
         selectedMarker(
           Marker(
@@ -159,17 +187,22 @@ class GmapController extends GetxController {
             position: selectedLocation(),
           ),
         );
-        if (co < 1) {
-          (await mapController.future).animateCamera(
+        if (firstZoom) {
+          mapController?.animateCamera(CameraUpdate.zoomTo(
+            14.4746,
+          ));
+          firstZoom = false;
+        }
+        await mapController?.getZoomLevel().then((value) {
+          mapController?.animateCamera(
             CameraUpdate.newCameraPosition(
               CameraPosition(
                 target: selectedLocation(),
-                zoom: 14.4746,
+                zoom: value,
               ),
             ),
           );
-          co++;
-        }
+        });
       }
     });
   }
@@ -182,14 +215,16 @@ class GmapController extends GetxController {
         position: selectedLocation(),
       ),
     );
-    (await mapController.future).animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: selectedLocation(),
-          zoom: 14.4746,
+    await mapController?.getZoomLevel().then((value) {
+      mapController?.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: selectedLocation(),
+            zoom: value,
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   void setRadius({required double radius}) {
@@ -202,6 +237,7 @@ class GmapController extends GetxController {
       Marker(
         markerId: const MarkerId('driver_marker'),
         position: driverLocation(),
+        icon: BitmapDescriptor.fromBytes(customDriverMarker!),
       ),
     );
   }
@@ -222,6 +258,43 @@ class GmapController extends GetxController {
   }) async {
     var response = await DeliveryService.updateMap(
         uidPengantar: pengantarUid, lat: lat, long: long);
+    debugPrint('Update Driver Location');
     debugPrint(response.toString());
+  }
+
+  OrderService orderService = OrderService();
+  Future<void> getPembeliLocation({required String uidDetailOrder}) async {
+    var response =
+        await orderService.getUserLocation(uidDetailOrder: uidDetailOrder);
+    if (response[0] == 200) {
+      setUserLocation(
+        LatLng(
+          double.parse(response[2][0]['langitude']),
+          double.parse(response[2][0]['longitude']),
+        ),
+      );
+
+      debugPrint(
+          'My Location\nLat: ${currentLocation().latitude}\nLong: ${currentLocation().longitude}');
+      debugPrint(
+          'Customer Location\nLat: ${response[2][0]['langitude']}\nLong: ${response[2][0]['longitude']}');
+    }
+  }
+
+  Future<void> getDriverLocation({required String uidPengantar}) async {
+    var response =
+        await orderService.getPengantarLocation(uidPengantar: uidPengantar);
+    if (response[0] == 200) {
+      setDriverLocation(
+        LatLng(
+          double.parse(response[2][0]['langtitude'].toString()),
+          double.parse(response[2][0]['longtitude'].toString()),
+        ),
+      );
+      debugPrint(
+          'My Location\nLat: ${currentLocation().latitude}\nLong: ${currentLocation().longitude}');
+      debugPrint(
+          'Driver location:\nLat: ${response[2][0]['langtitude']}\nLong: ${response[2][0]['longtitude']}');
+    }
   }
 }

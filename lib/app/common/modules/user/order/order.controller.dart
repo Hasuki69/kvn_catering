@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:kvn_catering/app/common/modules/gmap/gmap.controller.dart';
 import 'package:kvn_catering/app/common/services/remote/order.service.dart';
 import 'package:kvn_catering/app/core/utils/extensions/datepicker_func.dart';
 import 'package:kvn_catering/app/core/utils/extensions/loading_func.dart';
@@ -39,8 +37,6 @@ class OrderController extends GetxController {
   var selectedDate1 = DateFormat('dd-MM-yyyy').format(DateTime.now()).obs;
 
   final reviewController = TextEditingController();
-
-  final mapController = Get.find<GmapController>();
 
   Timer? timer;
 
@@ -141,22 +137,6 @@ class OrderController extends GetxController {
 
   void disposeTEC() {
     reviewController.dispose();
-  }
-
-  Future<void> getDriverLocation({required String uidPengantar}) async {
-    var response =
-        await orderService.getPengantarLocation(uidPengantar: uidPengantar);
-    if (response[0] == 200) {
-      timer = Timer.periodic(const Duration(seconds: 2), (timer) {
-        mapController.setDriverLocation(
-          LatLng(
-            double.parse(response[2][0]['langtitude'].toString()),
-            double.parse(response[2][0]['longtitude'].toString()),
-          ),
-        );
-        debugPrint('Fetch Map...');
-      });
-    }
   }
 
   Future<void> confirmOrder(

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:kvn_catering/app/common/modules/gmap/gmap.controller.dart';
 import 'package:kvn_catering/app/common/services/local/location.service.dart';
 import 'package:kvn_catering/app/common/services/remote/delivery.service.dart';
 import 'package:kvn_catering/app/common/services/remote/order.service.dart';
@@ -28,8 +26,6 @@ class DeliveryController extends GetxController {
   OrderService orderService = OrderService();
   LocationServices locationServices = LocationServices();
 
-  final mapController = Get.find<GmapController>();
-
   // ==================== FUCTIONS ====================
 
   get session => box.read('session') ?? false;
@@ -53,19 +49,6 @@ class DeliveryController extends GetxController {
   Future<void> refreshOrderList() async {
     futureDelivery.value =
         DeliveryService.getDelivery(uidPengantar: pengantarUid);
-  }
-
-  Future<void> getPembeliLocation({required String uidDetailOrder}) async {
-    var response =
-        await orderService.getUserLocation(uidDetailOrder: uidDetailOrder);
-    if (response[0] == 200) {
-      mapController.setUserLocation(
-        LatLng(
-          double.parse(response[2][0]['langitude']),
-          double.parse(response[2][0]['longitude']),
-        ),
-      );
-    }
   }
 
   Future<void> confirmOrder({required String idDetailOrder}) async {

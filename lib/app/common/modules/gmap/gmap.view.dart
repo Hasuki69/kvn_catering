@@ -19,7 +19,9 @@ Widget gmapBody(BuildContext context,
   return Obx(
     () => GoogleMap(
       initialCameraPosition: controller.initialCameraPosition(),
-      onMapCreated: controller.onMapCreated,
+      onMapCreated: (gmapController) {
+        controller.onMapCreated(gmapController);
+      },
       zoomControlsEnabled: false,
       markers: {
         controller.currentMarker(),
@@ -44,7 +46,9 @@ Widget gmapSetLocationBody(BuildContext context,
   return Obx(
     () => GoogleMap(
       initialCameraPosition: controller.initialCameraPosition(),
-      onMapCreated: controller.setLocationOnMapCreated,
+      onMapCreated: (gmapController) {
+        controller.setLocationOnMapCreated(gmapController);
+      },
       zoomControlsEnabled: false,
       circles: {
         Circle(
@@ -60,7 +64,7 @@ Widget gmapSetLocationBody(BuildContext context,
         controller.selectedMarker(),
       },
       onTap: (LatLng latLng) {
-        controller.isMyLocation(false);
+        controller.isMyLocation = false;
         controller.setSelectedLocation(latLng);
       },
     ),

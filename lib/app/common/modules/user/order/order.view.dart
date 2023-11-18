@@ -161,10 +161,6 @@ Widget orderBodyContent(BuildContext context,
                                           if (!Get.arguments['isHistory'])
                                             IconButton(
                                               onPressed: () {
-                                                controller.getDriverLocation(
-                                                    uidPengantar:
-                                                        menuList[indexItem]
-                                                            ['id_pengantar']);
                                                 controller
                                                     .getOrderDetail(
                                                         orderDetailUid: menuList[
@@ -172,21 +168,18 @@ Widget orderBodyContent(BuildContext context,
                                                             ['id_detail_order'])
                                                     .whenComplete(
                                                       () => Get.toNamed(
-                                                          '/user/order/detail',
-                                                          arguments: {
-                                                            'id_detail_order':
-                                                                menuList[
-                                                                        indexItem]
-                                                                    [
-                                                                    'id_detail_order']
-                                                          })?.whenComplete(
-                                                        () {
-                                                          controller
-                                                              .mapController
-                                                              .streamSubscription!
-                                                              .cancel();
-                                                          controller.timer
-                                                              ?.cancel();
+                                                        '/user/order/detail',
+                                                        arguments: {
+                                                          'id_detail_order':
+                                                              menuList[
+                                                                      indexItem]
+                                                                  [
+                                                                  'id_detail_order'],
+                                                          'id_pengantar':
+                                                              menuList[
+                                                                      indexItem]
+                                                                  [
+                                                                  'id_pengantar']
                                                         },
                                                       ),
                                                     );

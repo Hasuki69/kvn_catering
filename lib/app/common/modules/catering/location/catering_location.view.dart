@@ -121,8 +121,7 @@ Widget cateringLocationDetail(BuildContext context,
                       maxLines: 2,
                     ),
                     onPressed: () {
-                      mapController.isMyLocation(true);
-                      mapController.co = 0;
+                      mapController.isMyLocation = true;
                     },
                   ),
                 ),
