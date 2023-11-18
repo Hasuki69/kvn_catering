@@ -32,7 +32,7 @@ Widget orderDetailBody(BuildContext context,
     children: [
       SizedBox(
         width: size.width,
-        child: AspectRatio(
+        child: const AspectRatio(
           aspectRatio: 3 / 4,
           child: GmapView(
             isDriver: false,

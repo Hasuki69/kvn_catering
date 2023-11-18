@@ -31,7 +31,7 @@ Widget cateringLocationBody(BuildContext context,
     children: [
       SizedBox(
         width: size.width,
-        child: AspectRatio(
+        child: const AspectRatio(
           aspectRatio: 3 / 5.3,
           child: GmapSetLocationView(),
         ),

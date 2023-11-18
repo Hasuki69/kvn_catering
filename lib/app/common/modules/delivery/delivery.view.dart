@@ -126,10 +126,12 @@ Widget deliveryBodyContent(BuildContext context,
                                         controller.getPembeliLocation(
                                             uidDetailOrder: menuList[indexItem]
                                                 ['id_detail_order']);
-                                        Get.toNamed('/delivery/detail')
-                                            ?.whenComplete(() => Get.delete(
-                                                tag: 'gmap_controller',
-                                                force: true));
+                                        Get.toNamed('/delivery/detail')!
+                                            .whenComplete(() {
+                                          controller
+                                              .mapController.streamSubscription!
+                                              .cancel();
+                                        });
                                       },
                                       icon: const Icon(
                                         Icons.arrow_forward_ios,

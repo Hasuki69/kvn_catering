@@ -181,6 +181,10 @@ Widget orderBodyContent(BuildContext context,
                                                                     'id_detail_order']
                                                           })?.whenComplete(
                                                         () {
+                                                          controller
+                                                              .mapController
+                                                              .streamSubscription!
+                                                              .cancel();
                                                           controller.timer
                                                               ?.cancel();
                                                         },

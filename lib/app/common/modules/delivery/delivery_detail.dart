@@ -15,7 +15,7 @@ class DeliveryDetailView extends GetView<DeliveryController> {
       body: SizedBox(
         width: size.width,
         height: size.height,
-        child: GmapView(
+        child: const GmapView(
           isDriver: true,
         ),
       ),

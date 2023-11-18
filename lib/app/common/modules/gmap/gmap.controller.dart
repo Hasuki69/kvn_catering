@@ -20,7 +20,7 @@ class GmapController extends GetxController {
     // TODO: implement onClose
     super.onClose();
     mapController = Completer();
-    streamSubscription?.cancel();
+    stopListening();
   }
 
   // ==================== VARIABLES ====================
@@ -83,12 +83,17 @@ class GmapController extends GetxController {
 
     await locationPermission();
 
+    streamPos();
+  }
+
+  void streamPos() {
     streamSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.bestForNavigation,
         distanceFilter: 0,
       ),
     ).listen((event) async {
+      print('Listening on Location');
       currentLocation(LatLng(event.latitude, event.longitude));
       currentMarker(
         Marker(
@@ -96,7 +101,7 @@ class GmapController extends GetxController {
           position: currentLocation(),
         ),
       );
-      if (pengantarUid != '') {
+      if (pengantarUid != '' && mapController.isCompleted) {
         updateLocation(
             lat: event.latitude.toString(), long: event.longitude.toString());
       }
@@ -112,6 +117,12 @@ class GmapController extends GetxController {
         );
       }
     });
+  }
+
+  void stopListening() {
+    if (streamSubscription != null) {
+      streamSubscription!.cancel();
+    }
   }
 
   void setLocationOnMapCreated(GoogleMapController controller) async {
