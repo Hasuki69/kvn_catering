@@ -230,6 +230,20 @@ Widget cateringMenuListItem(BuildContext context,
                                         ],
                                       ),
                                     ),
+                                    IconButton(
+                                      onPressed: () {
+                                        controller.deleteMenu(
+                                          catUid: snapData[2][index]
+                                              ['id_catering'],
+                                          menuUid: snapData[2][index]['menu']
+                                              [indexMenu]['id_menu'],
+                                        );
+                                      },
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.amber,
+                                      ),
+                                    ),
                                     TextButton(
                                       onPressed: () {
                                         controller.setController(

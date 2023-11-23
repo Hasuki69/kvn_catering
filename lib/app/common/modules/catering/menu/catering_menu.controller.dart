@@ -217,4 +217,35 @@ class CateringMenuController extends GetxController {
     }
     clearForm();
   }
+
+  Future<void> deleteMenu(
+      {required String catUid, required String menuUid}) async {
+    getLoading();
+    var response = await cateringService
+        .catDeleteMenu(catUid: catUid, menuUid: menuUid)
+        .whenComplete(() => closeLoading());
+    if (response[0] == 200) {
+      updateCateringMenu(cateringUid: cateringUid);
+      Get.snackbar(
+        'Status ${response[0]}',
+        response[1],
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } else if (response[0] == 404) {
+      Get.snackbar(
+        'Status ${response[0]}',
+        response[1],
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } else {
+      Get.snackbar(
+        'Status ${response[0]}',
+        response[1],
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
 }
