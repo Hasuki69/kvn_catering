@@ -326,6 +326,7 @@ Widget cateringDetailListItem(BuildContext context,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List snapData = snapshot.data! as List;
+
             if (snapData[0] != 404) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -112,6 +112,13 @@ Widget cateringListBody(BuildContext context,
               const SizedBox(
                 width: 24,
               ),
+              ReText(
+                value:
+                    'No Rekening: ${Get.arguments['catering-data']['telp_catering']}',
+                style: AppStyle().titleSmall.copyWith(
+                      fontSize: 16,
+                    ),
+              ),
               FutureBuilder(
                 future: controller.futureQR(),
                 builder: (context, snapshot) {

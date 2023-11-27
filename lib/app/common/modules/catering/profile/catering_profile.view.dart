@@ -130,7 +130,7 @@ Widget cateringProfileData(BuildContext context,
                     ),
                     const SizedBox(height: 8),
                     ReText(
-                      value: 'No. telp Catering',
+                      value: 'No Rekening Catering',
                       style: AppStyle()
                           .titleMedium
                           .copyWith(color: AppColor.accent),

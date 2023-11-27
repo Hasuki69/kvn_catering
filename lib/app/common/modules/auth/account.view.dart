@@ -213,12 +213,12 @@ Widget isCatering(BuildContext context, {required AuthController controller}) {
       ),
       const SizedBox(height: 8),
       ReText(
-        value: 'No Telp Catering',
+        value: 'No Rekening Catering',
         style: AppStyle().titleMedium.copyWith(color: AppColor.accent),
       ),
       ReTextField(
         controller: controller.ctrlCateringPhone,
-        hintText: 'Masukkan Telp Catering',
+        hintText: 'Masukkan No Rekening Catering',
       ),
       const SizedBox(height: 8),
       ReText(
