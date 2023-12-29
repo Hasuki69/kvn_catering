@@ -188,7 +188,7 @@ Widget budgetingDetailBody(BuildContext context,
                                           controller: controller,
                                           isRealisasi: true,
                                           uidBahan: bahan[index]['id_bahan'],
-                                          uidBudget: snapData[2][0]
+                                          idBudgeting: snapData[2][0]
                                               ['id_budgeting'],
                                         ),
                                       ).whenComplete(
@@ -202,15 +202,18 @@ Widget budgetingDetailBody(BuildContext context,
                                   ),
                                   IconButton(
                                     onPressed: () {
-                                      controller.getRealisasi(
-                                        uidBahan: bahan[index]['id_bahan'],
+                                      controller.getRealisasiBahan(
+                                        idBudgeting: snapData[2][0]
+                                            ['id_budgeting'],
+                                        idBahan: bahan[index]['id_bahan'],
                                       );
                                       Get.dialog(
                                         bahanListDialog(
                                           context,
                                           controller: controller,
                                           title: bahan[index]['nama_bahan'],
-                                          future: controller.futureRealisasi(),
+                                          future:
+                                              controller.futureRealisasiBahan(),
                                         ),
                                       );
                                     },

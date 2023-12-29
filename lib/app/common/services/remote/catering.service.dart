@@ -20,7 +20,7 @@ class CateringService {
   }
 
   // Get Catering Menu
-  Future getCateringMenu(
+  Future getMenu(
       {required String cateringUid,
       required String dateFrom,
       required String dateTo}) async {
@@ -98,11 +98,11 @@ class CateringService {
   }
 
   // Catering Add Menu
-  Future catAddMenu({
-    required String catUid,
-    required String nama,
-    required String harga,
+  Future postMenu({
+    required String idCatering,
+    required String idMasterMenu,
     required String tanggal,
+    required String harga,
     required String jamAwal,
     required String jamAkhir,
     required String status,
@@ -113,8 +113,8 @@ class CateringService {
       'POST',
       url,
     );
-    request.fields['id_catering'] = catUid;
-    request.fields['nama_menu'] = nama;
+    request.fields['id_catering'] = idCatering;
+    request.fields['id_master_menu'] = idMasterMenu;
     request.fields['harga_menu'] = harga;
     request.fields['tanggal_menu'] = tanggal;
     request.fields['jam_pengiriman_awal'] = jamAwal;
@@ -137,7 +137,7 @@ class CateringService {
   }
 
   // Add to Fav
-  Future catUpdateMenu({
+  Future editMenu({
     required String catUid,
     required String menuUid,
     required String namaMenu,
@@ -167,16 +167,74 @@ class CateringService {
   }
 
   // Add to Fav
-  Future catDeleteMenu({
-    required String catUid,
-    required String menuUid,
+  Future deleteMenu({
+    required String idCatering,
+    required String idMenu,
   }) async {
     var url = Uri.parse(
-      '$apiPath/mn/delete-menu',
+      '$apiPath/mn/delete-menu?id_catering=$idCatering&id_menu=$idMenu',
     );
-    var response = await http.delete(url, body: {
-      'id_catering': catUid,
-      'id_menu': menuUid,
+    var response = await http.delete(url);
+    if (response.statusCode == 200) {
+      var respStatus = json.decode(response.body)['status'];
+      var respMessage = json.decode(response.body)['message'];
+      var respData = json.decode(response.body)['data'];
+      return [respStatus, respMessage, respData];
+    } else {
+      return '${response.statusCode} Unable to connect to server!';
+    }
+  }
+
+  // ==================== Master Menu ==================== //
+  Future getMasterMenu({required String idCatering}) async {
+    var url = Uri.parse('$apiPath/MM/master-menu?id_catering=$idCatering');
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var respStatus = json.decode(response.body)['status'];
+      var respMessage = json.decode(response.body)['message'];
+      var respData = json.decode(response.body)['data'];
+      return [respStatus, respMessage, respData];
+    } else {
+      return '${response.statusCode} Unable to connect to server!';
+    }
+  }
+
+  Future getDropdownMasterMenu({required String idCatering}) async {
+    var url = Uri.parse('$apiPath/MM/dropdown?id_catering=$idCatering');
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var respStatus = json.decode(response.body)['status'];
+      var respMessage = json.decode(response.body)['message'];
+      var respData = json.decode(response.body)['data'];
+      return [respStatus, respMessage, respData];
+    } else {
+      return '${response.statusCode} Unable to connect to server!';
+    }
+  }
+
+  Future postMasterMenu({
+    required String idCatering,
+    required String namaMenu,
+    required String descMenu,
+    required List bahan,
+  }) async {
+    String namaBahan = '', jumlahBahan = '', satuanBahan = '', hargaBahan = '';
+    for (var e in bahan) {
+      namaBahan += "|${e[0]}|";
+      jumlahBahan += "|${e[1]}|";
+      satuanBahan += "|${e[2]}|";
+      hargaBahan += "|${e[3]}|";
+    }
+    var url = Uri.parse('$apiPath/MM/master-menu');
+
+    var response = await http.post(url, body: {
+      'id_catering': idCatering,
+      'nama_menu': namaMenu,
+      'deskripsi_menu': descMenu,
+      'nama_bahan': namaBahan,
+      'jumlah_bahan': jumlahBahan,
+      'satuan_bahan': satuanBahan,
+      'harga_bahan': hargaBahan,
     });
     if (response.statusCode == 200) {
       var respStatus = json.decode(response.body)['status'];

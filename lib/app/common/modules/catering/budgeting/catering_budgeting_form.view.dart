@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kvn_catering/app/common/modules/catering/budgeting/catering_budgeting.controller.dart';
-import 'package:kvn_catering/app/common/modules/catering/budgeting/catering_budgeting_dialog.view.dart';
 import 'package:kvn_catering/app/common/widgets/custom_button.dart';
-import 'package:kvn_catering/app/common/widgets/custom_elevation.dart';
-import 'package:kvn_catering/app/common/widgets/custom_listview.dart';
 import 'package:kvn_catering/app/common/widgets/custom_text.dart';
 import 'package:kvn_catering/app/core/themes/theme.dart';
-import 'package:kvn_catering/app/core/utils/extensions/string_currency.dart';
 
 class CateringBudgetingFormView extends GetView<CateringBudgetingController> {
   const CateringBudgetingFormView({super.key});
@@ -43,12 +39,22 @@ Widget budgetingFormBody(BuildContext context,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ReText(
-          value: 'Nama Menu',
+          value: 'Pilih Menu',
           style: AppStyle().titleMedium.copyWith(color: AppColor.accent),
         ),
-        ReTextField(
-          controller: controller.tecNamaMenu,
-          hintText: 'Masukkan Nama Menu',
+        DropdownMenu(
+          inputDecorationTheme: const InputDecorationTheme(
+            isDense: true,
+            border: OutlineInputBorder(),
+          ),
+          onSelected: (value) => controller.selectedMasterMenu = value,
+          dropdownMenuEntries: List.generate(
+            controller.dropdownMasterMenu.length,
+            (index) => DropdownMenuEntry(
+              value: controller.dropdownMasterMenu[index][0],
+              label: controller.dropdownMasterMenu[index][1],
+            ),
+          ),
         ),
         const SizedBox(height: 8),
         ReText(
@@ -76,99 +82,6 @@ Widget budgetingFormBody(BuildContext context,
                 Icons.calendar_month,
                 color: AppColor.accent,
                 size: 24,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        ReText(
-          value: 'Bahan',
-          style: AppStyle().titleMedium.copyWith(color: AppColor.accent),
-        ),
-        Obx(
-          () => Container(
-            decoration: BoxDecoration(
-              color: AppColor.disable.withOpacity(0.4),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  controller.listBahan().isEmpty
-                      ? const Center(
-                          child: ReText(
-                            value: 'Belum ada bahan',
-                          ),
-                        )
-                      : Obx(
-                          () => ReListView(
-                            itemCount: controller.listBahan().length,
-                            itemBuilder: (context, index) {
-                              return ReElevation(
-                                child: Card(
-                                  child: ListTile(
-                                    dense: true,
-                                    title: ReText(
-                                      value:
-                                          '${controller.listBahan()[index]['nama']}',
-                                    ),
-                                    subtitle: ReText(
-                                      value:
-                                          '${controller.listBahan()[index]['jumlah']} ${controller.listBahan()[index]['satuan']}',
-                                    ),
-                                    trailing: Wrap(
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.center,
-                                      children: [
-                                        ReText(
-                                          value: CurrencyFormat.toIdr(
-                                              controller.listBahan()[index]
-                                                  ['budget'],
-                                              0),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {
-                                            controller.removeItemAt(index);
-                                          },
-                                          icon: Icon(
-                                            Icons.delete,
-                                            color: Colors.red.withOpacity(0.6),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton.filled(
-                        style: IconButton.styleFrom(
-                          backgroundColor: AppColor.accent,
-                        ),
-                        onPressed: () => Get.dialog(
-                          bahanDialog(context, controller: controller),
-                          barrierDismissible: false,
-                        ).whenComplete(
-                          () => controller.clearFormBahan(),
-                        ),
-                        icon: const Icon(
-                          Icons.add,
-                          color: AppColor.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
               ),
             ),
           ),

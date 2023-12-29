@@ -123,7 +123,7 @@ Widget cateringListItem(BuildContext context,
                       )) {
                         return GestureDetector(
                           onTap: () {
-                            controller.getCateringMenu(
+                            controller.getMenu(
                                 cateringUid: snapData[2][index]['id_catering']);
                             controller.getAddress(
                               lat: snapData[2][index]['langtitude'],

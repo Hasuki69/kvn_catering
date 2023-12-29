@@ -22,7 +22,11 @@ class CateringMenuView extends GetView<CateringMenuController> {
         controller: ScrollController(),
         child: cateringMenuBody(context, controller: controller),
       ),
-      floatingActionButton: cateringMenuFAB(context, controller: controller),
+      floatingActionButton: cateringMenuFAB(
+        context,
+        controller: controller,
+        dropdownMasterMenu: controller.dropdownMasterMenu,
+      ),
     );
   }
 }
@@ -61,7 +65,27 @@ Widget cateringMenuBottomAppBar(BuildContext context,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            cateringMenuBottomBarDate(context, controller: controller),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                cateringMenuBottomBarDate(context, controller: controller),
+                ReElevatedButton(
+                  onPressed: () {
+                    controller.getMasterMenu();
+                    Get.toNamed('/catering/menu/master')!.then((value) {
+                      controller.getMenu();
+                      controller.getDropdownMasterMenu();
+                    });
+                  },
+                  child: ReText(
+                    value: "Master menu",
+                    style: AppStyle().titleSmall.copyWith(
+                          color: Colors.white,
+                        ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -233,9 +257,7 @@ Widget cateringMenuListItem(BuildContext context,
                                     IconButton(
                                       onPressed: () {
                                         controller.deleteMenu(
-                                          catUid: snapData[2][index]
-                                              ['id_catering'],
-                                          menuUid: snapData[2][index]['menu']
+                                          idMenu: snapData[2][index]['menu']
                                               [indexMenu]['id_menu'],
                                         );
                                       },
@@ -250,12 +272,17 @@ Widget cateringMenuListItem(BuildContext context,
                                             data: snapData[2][index]['menu']
                                                 [indexMenu]);
                                         Get.dialog(
-                                          menuDialog(context,
-                                              controller: controller,
-                                              menuUid: snapData[2][index]
-                                                      ['menu'][indexMenu]
-                                                  ['id_menu'],
-                                              isEdit: true),
+                                          menuDialog(
+                                            context,
+                                            controller: controller,
+                                            menuUid: snapData[2][index]['menu']
+                                                [indexMenu]['id_menu'],
+                                            namaMenu: snapData[2][index]['menu']
+                                                [indexMenu]['nama_menu'],
+                                            isEdit: true,
+                                            dropdownMasterMenu:
+                                                controller.dropdownMasterMenu,
+                                          ),
                                         );
                                       },
                                       child: ReText(
@@ -294,13 +321,20 @@ Widget cateringMenuListItem(BuildContext context,
   );
 }
 
-Widget cateringMenuFAB(BuildContext context,
-    {required CateringMenuController controller}) {
+Widget cateringMenuFAB(
+  BuildContext context, {
+  required CateringMenuController controller,
+  required List dropdownMasterMenu,
+}) {
   return FloatingActionButton(
     backgroundColor: AppColor.accent,
     onPressed: () {
       Get.dialog(
-        menuDialog(context, controller: controller),
+        menuDialog(
+          context,
+          controller: controller,
+          dropdownMasterMenu: dropdownMasterMenu,
+        ),
       );
     },
     child: const Icon(
@@ -315,6 +349,8 @@ Widget menuDialog(
   required CateringMenuController controller,
   bool isEdit = false,
   String menuUid = '',
+  String namaMenu = '',
+  required List dropdownMasterMenu,
 }) {
   return ReActionDialog(
     onCancel: () {
@@ -326,48 +362,53 @@ Widget menuDialog(
           ? controller.inputMenu()
           : controller.updateMenu(menuUid: menuUid);
     },
-    title: 'Tambah Menu',
+    title: isEdit ? 'Edit Menu $namaMenu' : 'Tambah Menu',
     children: [
-      Obx(
-        () => TextButton(
-          onPressed: () {
-            controller.callDatePickerInput(context);
-          },
-          child: ReText(
-            value: 'Tanggal: ${controller.currDate1()}',
-            style: AppStyle().titleMedium,
-          ),
-        ),
-      ),
-      const SizedBox(
-        width: 8,
-      ),
-      ReText(
-        value: 'Nama Menu',
-        style: AppStyle().titleMedium.copyWith(color: AppColor.accent),
-      ),
-      const SizedBox(
-        width: 8,
-      ),
-      ReTextField(
-        controller: controller.tecNamaMenu,
-      ),
-      const SizedBox(
-        width: 8,
-      ),
+      if (!isEdit)
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Obx(
+              () => TextButton(
+                onPressed: () {
+                  controller.callDatePickerInput(context);
+                },
+                child: ReText(
+                  value: 'Tanggal: ${controller.currDate1()}',
+                  style: AppStyle().titleMedium,
+                ),
+              ),
+            ),
+            const SizedBox(
+              width: 8,
+            ),
+            ReText(
+              value: 'Pilih Menu',
+              style: AppStyle().titleMedium.copyWith(color: AppColor.accent),
+            ),
+            DropdownMenu(
+              inputDecorationTheme: const InputDecorationTheme(
+                isDense: true,
+                border: OutlineInputBorder(),
+              ),
+              onSelected: (value) => controller.selectedMasterMenu = value,
+              dropdownMenuEntries: List.generate(
+                dropdownMasterMenu.length,
+                (index) => DropdownMenuEntry(
+                  value: dropdownMasterMenu[index][0],
+                  label: dropdownMasterMenu[index][1],
+                ),
+              ),
+            ),
+          ],
+        ).paddingOnly(bottom: 8),
       ReText(
         value: 'Harga Menu',
         style: AppStyle().titleMedium.copyWith(color: AppColor.accent),
       ),
-      const SizedBox(
-        width: 8,
-      ),
       ReTextField(
         keyboardType: TextInputType.number,
         controller: controller.tecHarga,
-      ),
-      const SizedBox(
-        width: 8,
       ),
       GetBuilder<CateringMenuController>(
         builder: (controller) {

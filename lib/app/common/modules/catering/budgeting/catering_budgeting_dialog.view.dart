@@ -13,7 +13,7 @@ Widget bahanDialog(
   required CateringBudgetingController controller,
   bool isRealisasi = false,
   String uidBahan = '',
-  String uidBudget = '',
+  String idBudgeting = '',
 }) {
   return ReActionDialog(
     onCancel: () {
@@ -24,7 +24,7 @@ Widget bahanDialog(
       if (!isRealisasi) {
         controller.addtoListBahan();
       } else {
-        controller.postRealisasi(uidBahan: uidBahan, budgetUid: uidBudget);
+        controller.postRealisasi(uidBahan: uidBahan, idBudgeting: idBudgeting);
       }
     },
     title: !isRealisasi ? 'Tambah Bahan' : 'Realisasi Bahan',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kvn_catering/app/common/modules/user/all_order/all_order.view.dart';
 import 'package:kvn_catering/app/common/modules/user/user.controller.dart';
 import 'package:kvn_catering/app/common/widgets/custom_text.dart';
 import 'package:kvn_catering/app/core/configs/const.dart';
@@ -65,6 +66,24 @@ Widget userSidebarContent(BuildContext context,
           onTap: () => Get.toNamed(
             '/user/order',
             arguments: {'isHistory': false},
+          ),
+        ),
+        ListTile(
+          leading: const Icon(Icons.format_list_numbered_rounded),
+          iconColor: AppColor.accent,
+          title: ReText(
+            value: 'View All Order (Today)',
+            style: AppStyle().titleMedium.copyWith(
+                  color: AppColor.accent,
+                ),
+          ),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AllOrderView(
+                idUser: controller.uid,
+              ),
+            ),
           ),
         ),
         ListTile(

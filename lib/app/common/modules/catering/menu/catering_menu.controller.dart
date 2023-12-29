@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -13,7 +15,8 @@ class CateringMenuController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    getCateringMenu(cateringUid: cateringUid);
+    getMenu();
+    getDropdownMasterMenu();
   }
 
   @override
@@ -28,6 +31,7 @@ class CateringMenuController extends GetxController {
   CateringService cateringService = CateringService();
 
   var futureCateringMenu = Future.value().obs;
+  var futureMasterMenu = Future.value().obs;
 
   var selectedDate = DateTime.now();
   var selectedDate1 = DateFormat('dd-MM-yyyy').format(DateTime.now()).obs;
@@ -45,6 +49,9 @@ class CateringMenuController extends GetxController {
   final tecJamAwal = TextEditingController();
   final tecJamAkhir = TextEditingController();
 
+  RxList dropdownMasterMenu = List.empty(growable: true).obs;
+  String selectedMasterMenu = '';
+
   // ==================== FUNCTION ====================
   get session => box.read('session') ?? false;
   get uid => box.read('uid') ?? '';
@@ -52,18 +59,30 @@ class CateringMenuController extends GetxController {
   get pengantarUid => box.read('pengantarUid') ?? '';
   get role => box.read('role') ?? 0;
 
-  Future<void> getCateringMenu({required String cateringUid}) async {
-    futureCateringMenu = cateringService
-        .getCateringMenu(
-          cateringUid: cateringUid,
-          dateFrom: selectedDate1(),
-          dateTo: '',
-        )
-        .obs;
+  Future<void> getDropdownMasterMenu() async {
+    log("Fetch Dropdown Master Menu API", name: "Service");
+    dropdownMasterMenu.clear();
+    await cateringService
+        .getDropdownMasterMenu(idCatering: cateringUid)
+        .then((value) {
+      if (value[0] == 200) {
+        for (var e in value[2]) {
+          dropdownMasterMenu.add(
+            [e['id_master_menu'], e['nama_menu']],
+          );
+        }
+      }
+    });
   }
 
-  Future<void> updateCateringMenu({required String cateringUid}) async {
-    futureCateringMenu.value = cateringService.getCateringMenu(
+  Future<void> getMasterMenu() async {
+    log("Fetch Master Menu API", name: "Service");
+    futureMasterMenu.value =
+        cateringService.getMasterMenu(idCatering: cateringUid);
+  }
+
+  Future<void> getMenu() async {
+    futureCateringMenu.value = cateringService.getMenu(
       cateringUid: cateringUid,
       dateFrom: selectedDate1(),
       dateTo: '',
@@ -77,7 +96,7 @@ class CateringMenuController extends GetxController {
 
     selectedDate1.value = DateFormat('dd-MM-yyyy').format(selectedDate);
 
-    updateCateringMenu(cateringUid: cateringUid);
+    getMenu();
   }
 
   Future<void> callDatePickerInput(BuildContext context) async {
@@ -108,7 +127,7 @@ class CateringMenuController extends GetxController {
   void clearForm() {
     imagePath('');
     imageFile('');
-    tecNamaMenu.clear();
+    selectedMasterMenu = '';
     tecHarga.clear();
     tecJamAwal.clear();
     tecJamAkhir.clear();
@@ -124,7 +143,7 @@ class CateringMenuController extends GetxController {
   Future<void> inputMenu() async {
     var status = '0';
     if (currDate1() == '' ||
-        tecNamaMenu.text == '' ||
+        selectedMasterMenu == '' ||
         tecHarga.text == '' ||
         tecJamAwal.text == '' ||
         tecJamAkhir.text == '' ||
@@ -133,9 +152,9 @@ class CateringMenuController extends GetxController {
     } else {
       getLoading();
       var response = await cateringService
-          .catAddMenu(
-              catUid: cateringUid,
-              nama: tecNamaMenu.text,
+          .postMenu(
+              idCatering: cateringUid,
+              idMasterMenu: selectedMasterMenu,
               harga: tecHarga.text,
               tanggal: currDate1(),
               jamAwal: tecJamAwal.text,
@@ -168,7 +187,7 @@ class CateringMenuController extends GetxController {
           colorText: Colors.white,
         );
       }
-      updateCateringMenu(cateringUid: cateringUid);
+      getMenu();
     }
   }
 
@@ -182,7 +201,7 @@ class CateringMenuController extends GetxController {
   Future<void> updateMenu({required String menuUid}) async {
     getLoading();
     var response = await cateringService
-        .catUpdateMenu(
+        .editMenu(
             catUid: cateringUid,
             menuUid: menuUid,
             namaMenu: tecNamaMenu.text,
@@ -193,7 +212,7 @@ class CateringMenuController extends GetxController {
 
     if (response[0] == 200) {
       Get.back();
-      updateCateringMenu(cateringUid: cateringUid);
+      getMenu();
       Get.snackbar(
         'Status ${response[0]}',
         response[1],
@@ -218,14 +237,13 @@ class CateringMenuController extends GetxController {
     clearForm();
   }
 
-  Future<void> deleteMenu(
-      {required String catUid, required String menuUid}) async {
+  Future<void> deleteMenu({required String idMenu}) async {
     getLoading();
     var response = await cateringService
-        .catDeleteMenu(catUid: catUid, menuUid: menuUid)
+        .deleteMenu(idCatering: cateringUid, idMenu: idMenu)
         .whenComplete(() => closeLoading());
+    getMenu();
     if (response[0] == 200) {
-      updateCateringMenu(cateringUid: cateringUid);
       Get.snackbar(
         'Status ${response[0]}',
         response[1],

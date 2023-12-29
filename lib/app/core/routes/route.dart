@@ -5,6 +5,7 @@ import 'package:kvn_catering/app/common/modules/catering/budgeting/catering_budg
 import 'package:kvn_catering/app/common/modules/catering/budgeting/catering_budgeting_form.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/catering.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/location/catering_location.view.dart';
+import 'package:kvn_catering/app/common/modules/catering/menu/catering_master_menu.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/menu/catering_menu.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/notification/catering_notification.view.dart';
 import 'package:kvn_catering/app/common/modules/catering/notification/catering_notification_detail.view.dart';
@@ -113,6 +114,11 @@ List<GetPage<dynamic>> getPages = [
   GetPage(
     name: '/catering/menu',
     page: () => const CateringMenuView(),
+    binding: CateringMenuBinding(),
+  ),
+  GetPage(
+    name: '/catering/menu/master',
+    page: () => const MasterMenuView(),
     binding: CateringMenuBinding(),
   ),
   GetPage(

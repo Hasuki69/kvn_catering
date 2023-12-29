@@ -99,10 +99,10 @@ class CateringListController extends GetxController {
     futureQR = cateringService.getQr(catUid: catUid).obs;
   }
 
-  Future<void> getCateringMenu({required String cateringUid}) async {
+  Future<void> getMenu({required String cateringUid}) async {
     if (selectedFilter() == 'Mingguan' || selectedFilter() == 'Bulanan') {
       futureCateringMenu = cateringService
-          .getCateringMenu(
+          .getMenu(
             cateringUid: cateringUid,
             dateFrom: selectedDate1(),
             dateTo: selectedDate2(),
@@ -110,7 +110,7 @@ class CateringListController extends GetxController {
           .obs;
     } else {
       futureCateringMenu = cateringService
-          .getCateringMenu(
+          .getMenu(
             cateringUid: cateringUid,
             dateFrom: selectedDate1(),
             dateTo: '',
@@ -121,13 +121,13 @@ class CateringListController extends GetxController {
 
   Future<void> updateCateringMenu({required String cateringUid}) async {
     if (selectedFilter() == 'Mingguan' || selectedFilter() == 'Bulanan') {
-      futureCateringMenu.value = cateringService.getCateringMenu(
+      futureCateringMenu.value = cateringService.getMenu(
         cateringUid: cateringUid,
         dateFrom: selectedDate1(),
         dateTo: selectedDate2(),
       );
     } else {
-      futureCateringMenu.value = cateringService.getCateringMenu(
+      futureCateringMenu.value = cateringService.getMenu(
         cateringUid: cateringUid,
         dateFrom: selectedDate1(),
         dateTo: '',

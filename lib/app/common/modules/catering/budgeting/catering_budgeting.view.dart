@@ -57,6 +57,9 @@ Widget budgetingBody(BuildContext context,
                           onPressed: () {
                             controller.getBudgetingDetail(
                                 budgetUid: snapData[2][index]['id_budgeting']);
+                            controller.getRealisasi(
+                                idBudgeting: snapData[2][index]['id_budgeting'],
+                                idMasterMenu: snapData[2][index]['id_menu']);
                             Get.toNamed(
                               '/catering/budgeting/detail',
                             );

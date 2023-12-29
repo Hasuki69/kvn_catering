@@ -1,11 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:kvn_catering/app/common/services/remote/budgeting.service.dart';
+import 'package:kvn_catering/app/common/services/remote/catering.service.dart';
 import 'package:kvn_catering/app/core/utils/extensions/datepicker_func.dart';
 import 'package:kvn_catering/app/core/utils/extensions/loading_func.dart';
-import 'package:kvn_catering/app/core/utils/extensions/string_separator.dart';
 
 class CateringBudgetingController extends GetxController {
   @override
@@ -13,6 +15,7 @@ class CateringBudgetingController extends GetxController {
     // TODO: implement onInit
     super.onInit();
     getBudgeting();
+    getDropdownMasterMenu();
   }
 
   @override
@@ -28,8 +31,8 @@ class CateringBudgetingController extends GetxController {
   var futureBudgetingDetail = Future.value().obs;
 
   var futureRealisasi = Future.value().obs;
+  var futureRealisasiBahan = Future.value().obs;
 
-  final tecNamaMenu = TextEditingController();
   final tecPorsi = TextEditingController();
   final tecTanggal = TextEditingController();
   var listBahan = [].obs;
@@ -42,11 +45,30 @@ class CateringBudgetingController extends GetxController {
   var selectedDate = DateTime.now();
   var selectedDate1 = DateFormat('dd-MM-yyyy').format(DateTime.now()).obs;
 
+  RxList dropdownMasterMenu = List.empty(growable: true).obs;
+  String selectedMasterMenu = '';
+
   // ==================== FUNCTION ====================
   get session => box.read('session') ?? false;
   get uid => box.read('uid') ?? '';
   get cateringUid => box.read('cateringUid') ?? '';
   get role => box.read('role') ?? 0;
+
+  Future<void> getDropdownMasterMenu() async {
+    log("Fetch Dropdown Master Menu API", name: "Service");
+    dropdownMasterMenu.clear();
+    await CateringService()
+        .getDropdownMasterMenu(idCatering: cateringUid)
+        .then((value) {
+      if (value[0] == 200) {
+        for (var e in value[2]) {
+          dropdownMasterMenu.add(
+            [e['id_master_menu'], e['nama_menu']],
+          );
+        }
+      }
+    });
+  }
 
   Future<void> callDatePicker(BuildContext context) async {
     await datePicker(context, selected: selectedDate).then((value) {
@@ -81,7 +103,6 @@ class CateringBudgetingController extends GetxController {
   void clearForm() {
     selectedDate = DateTime.now();
     selectedDate1 = DateFormat('dd-MM-yyyy').format(DateTime.now()).obs;
-    tecNamaMenu.clear();
     tecPorsi.clear();
     tecTanggal.clear();
     listBahan.value = [];
@@ -95,7 +116,6 @@ class CateringBudgetingController extends GetxController {
   }
 
   void disposeForm() {
-    tecNamaMenu.dispose();
     tecPorsi.dispose();
     tecTanggal.dispose();
     tecNamaBahan.dispose();
@@ -104,8 +124,16 @@ class CateringBudgetingController extends GetxController {
     tecSatuanBahan.dispose();
   }
 
-  Future<void> getRealisasi({required String uidBahan}) async {
-    futureRealisasi = BudgetingService.getRealisasi(uidBahan: uidBahan).obs;
+  void getRealisasi(
+      {required String idBudgeting, required String idMasterMenu}) {
+    futureRealisasi.value = BudgetingService.getRealisasi(
+        idBudgeting: idBudgeting, idMasterMenu: idMasterMenu);
+  }
+
+  void getRealisasiBahan(
+      {required String idBudgeting, required String idBahan}) {
+    futureRealisasiBahan.value = BudgetingService.getRealisasiBahan(
+        idBudgeting: idBudgeting, idBahan: idBahan);
   }
 
   Future<void> getBudgeting() async {
@@ -127,39 +155,18 @@ class CateringBudgetingController extends GetxController {
   }
 
   Future<void> postBudgeting() async {
-    if (tecNamaMenu.text.isEmpty ||
+    if (selectedMasterMenu.isEmpty ||
         tecPorsi.text.isEmpty ||
-        tecTanggal.text.isEmpty ||
-        listBahan.isEmpty) {
+        tecTanggal.text.isEmpty) {
       Get.snackbar("Error", "Please fill all field");
     } else {
       getLoading();
-      List tempNamaBahan = [];
-      List tempJumlahBahan = [];
-      List tempSatuanBahan = [];
-      List tempHargaBahan = [];
-
-      for (var i = 0; i < listBahan.length; i++) {
-        tempNamaBahan.add(listBahan[i]['nama']);
-        tempJumlahBahan.add(listBahan[i]['jumlah']);
-        tempSatuanBahan.add(listBahan[i]['satuan']);
-        tempHargaBahan.add(listBahan[i]['budget']);
-      }
-      var namaBahan = strSeparator(tempNamaBahan, '|');
-      var jumlahBahan = strSeparator(tempJumlahBahan, '|');
-      var satuanBahan = strSeparator(tempSatuanBahan, '|');
-      var hargaBahan = strSeparator(tempHargaBahan, '|');
-
       var response = await BudgetingService.inputBudgeting(
-              catUid: cateringUid,
-              namaMenu: tecNamaMenu.text,
-              totalPorsi: tecPorsi.text,
-              tanggal: tecTanggal.text,
-              namaBahan: namaBahan,
-              jumlahBahan: jumlahBahan,
-              satuanBahan: satuanBahan,
-              hargaBahan: hargaBahan)
-          .whenComplete(() => closeLoading());
+        catUid: cateringUid,
+        idMasterMenu: selectedMasterMenu,
+        totalPorsi: tecPorsi.text,
+        tanggal: tecTanggal.text,
+      ).whenComplete(() => closeLoading());
 
       if (response[0] == 200) {
         refreshBudgeting();
@@ -190,7 +197,7 @@ class CateringBudgetingController extends GetxController {
   }
 
   Future<void> postRealisasi(
-      {required String uidBahan, required String budgetUid}) async {
+      {required String uidBahan, required String idBudgeting}) async {
     if (tecNamaBahan.text.isEmpty ||
         tecJumlahBahan.text.isEmpty ||
         tecBudgetBahan.text.isEmpty) {
@@ -198,11 +205,12 @@ class CateringBudgetingController extends GetxController {
     } else {
       getLoading();
       var response = await BudgetingService.inputRealisasi(
-              uidBahan: uidBahan,
-              keterangan: tecNamaBahan.text,
-              jumlah: tecJumlahBahan.text,
-              harga: tecBudgetBahan.text)
-          .whenComplete(() => closeLoading());
+        uidBahan: uidBahan,
+        keterangan: tecNamaBahan.text,
+        jumlah: tecJumlahBahan.text,
+        harga: tecBudgetBahan.text,
+        idBudgeting: idBudgeting,
+      ).whenComplete(() => closeLoading());
 
       if (response[0] == 200) {
         Get.back();
