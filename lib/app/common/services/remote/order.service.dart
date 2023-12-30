@@ -45,6 +45,7 @@ class OrderService {
     required String hargaMenu,
     required String tanggalMenu,
     required String tanggalOrder,
+    required String alamat,
     required String lat,
     required String long,
     required String imagePath,
@@ -62,6 +63,7 @@ class OrderService {
     request.fields['harga_menu'] = hargaMenu;
     request.fields['tanggal_menu'] = tanggalMenu;
     request.fields['tanggal_order'] = tanggalOrder;
+    request.fields['alamat'] = alamat;
     request.fields['langtitude'] = lat;
     request.fields['longtitude'] = long;
     request.files.add(
@@ -76,7 +78,8 @@ class OrderService {
       var body = json.decode(resp.body)['data'];
       return [status, message, body];
     } else {
-      return '${response.statusCode} Unable to connect to server!';
+      return response.reasonPhrase.toString();
+      // return '${response.statusCode} Unable to connect to server!';
     }
   }
 

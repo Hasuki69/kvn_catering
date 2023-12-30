@@ -24,6 +24,7 @@ class CateringListController extends GetxController {
   void onClose() {
     // TODO: implement onClose
     super.onClose();
+    ctrlAlamat.dispose();
   }
 
   // ==================== VARIABLES ====================
@@ -52,6 +53,8 @@ class CateringListController extends GetxController {
 
   var imagePath = ''.obs;
   var imageFile = ''.obs;
+
+  final ctrlAlamat = TextEditingController();
 
   // ==================== FUCTIONS ====================
   get session => box.read('session') ?? false;
@@ -229,6 +232,13 @@ class CateringListController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+    } else if (ctrlAlamat.text.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Alamat pengiriman harus diisi',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } else {
       getLoading();
 
@@ -278,6 +288,7 @@ class CateringListController extends GetxController {
             lat: currLocation.latitude.toString(),
             long: currLocation.longitude.toString(),
             imagePath: imagePath.value,
+            alamat: ctrlAlamat.text,
           )
           .whenComplete(() => closeLoading());
 
@@ -285,6 +296,7 @@ class CateringListController extends GetxController {
         Get.back();
         Get.back();
         Get.back();
+        ctrlAlamat.clear();
 
         Get.snackbar(
           'Status ${response[0]}',
@@ -301,8 +313,8 @@ class CateringListController extends GetxController {
         );
       } else {
         Get.snackbar(
-          'Status ${response[0]}',
-          response[1],
+          'Error',
+          response,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );

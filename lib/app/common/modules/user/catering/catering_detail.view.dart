@@ -433,90 +433,181 @@ Widget cateringDetailListItem(BuildContext context,
                                             ),
                                             Expanded(
                                               flex: 3,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                              child: Stack(
                                                 children: [
-                                                  ReText(
-                                                    value: snapData[2][index]
-                                                            ['menu'][indexMenu]
-                                                        ['nama_menu'],
-                                                    style: AppStyle()
-                                                        .titleMedium
-                                                        .copyWith(fontSize: 18),
-                                                    maxLines: 3,
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.topRight,
+                                                    child: IconButton(
+                                                      onPressed: () {
+                                                        Get.dialog(
+                                                          Dialog(
+                                                            elevation: 0,
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .stretch,
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              children: [
+                                                                ReText(
+                                                                  value:
+                                                                      "Description: ",
+                                                                  style: AppStyle()
+                                                                      .titleSmall
+                                                                      .copyWith(
+                                                                        color: Colors
+                                                                            .amber,
+                                                                      ),
+                                                                ),
+                                                                ReText(
+                                                                  value: snapData[2][index]
+                                                                              [
+                                                                              'menu']
+                                                                          [
+                                                                          indexMenu]
+                                                                      [
+                                                                      'deskripsi_menu'],
+                                                                  maxLines: 5,
+                                                                ),
+                                                                ReText(
+                                                                  value:
+                                                                      "List Bahan: ",
+                                                                  style: AppStyle()
+                                                                      .titleSmall
+                                                                      .copyWith(
+                                                                        color: Colors
+                                                                            .amber,
+                                                                      ),
+                                                                ),
+                                                                ListView
+                                                                    .builder(
+                                                                  shrinkWrap:
+                                                                      true,
+                                                                  itemCount: snapData[2][index]['menu']
+                                                                              [
+                                                                              indexMenu]
+                                                                          [
+                                                                          'bahan_menu']
+                                                                      .length,
+                                                                  itemBuilder:
+                                                                      (context,
+                                                                          indexItem) {
+                                                                    final item =
+                                                                        snapData[2][index]['menu'][indexMenu]['bahan_menu'][indexItem]
+                                                                            [
+                                                                            'nama_bahan_menu'];
+                                                                    return ReText(
+                                                                        value:
+                                                                            "${indexItem + 1}. $item");
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            ).paddingAll(16),
+                                                          ),
+                                                        );
+                                                      },
+                                                      icon: const Icon(
+                                                        Icons.list_alt,
+                                                        color: Colors.amber,
+                                                      ),
+                                                    ),
                                                   ),
-                                                  ReText(
-                                                    value: CurrencyFormat.toIdr(
-                                                        snapData[2][index]
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      ReText(
+                                                        value: snapData[2]
+                                                                        [index]
                                                                     ['menu']
                                                                 [indexMenu]
-                                                            ['harga_menu'],
-                                                        0),
-                                                    style: AppStyle().bodyLarge,
-                                                  ),
-                                                  StatefulBuilder(
-                                                    builder:
-                                                        (context, setState) {
-                                                      return Row(
-                                                        children: [
-                                                          const Spacer(),
-                                                          IconButton(
-                                                            color:
-                                                                AppColor.accent,
-                                                            onPressed: () {
-                                                              if (controller.menuItem[
-                                                                          index]
-                                                                      [
-                                                                      indexMenu][2] >
-                                                                  0) {
-                                                                controller.menuItem[
-                                                                            index]
+                                                            ['nama_menu'],
+                                                        style: AppStyle()
+                                                            .titleMedium
+                                                            .copyWith(
+                                                                fontSize: 18),
+                                                        maxLines: 3,
+                                                      ),
+                                                      ReText(
+                                                        value: CurrencyFormat.toIdr(
+                                                            snapData[2][index]
+                                                                        ['menu']
+                                                                    [indexMenu]
+                                                                ['harga_menu'],
+                                                            0),
+                                                        style: AppStyle()
+                                                            .bodyLarge,
+                                                      ),
+                                                      StatefulBuilder(
+                                                        builder: (context,
+                                                            setState) {
+                                                          return Row(
+                                                            children: [
+                                                              const Spacer(),
+                                                              IconButton(
+                                                                color: AppColor
+                                                                    .accent,
+                                                                onPressed: () {
+                                                                  if (controller
+                                                                              .menuItem[index]
+                                                                          [
+                                                                          indexMenu][2] >
+                                                                      0) {
+                                                                    controller.menuItem[index]
+                                                                            [
+                                                                            indexMenu]
                                                                         [
-                                                                        indexMenu]
-                                                                    [2] -= 1;
-                                                                controller
-                                                                    .itemCount
-                                                                    .value -= 1;
-                                                              }
-                                                              if (context
-                                                                  .mounted) {
-                                                                setState(() {});
-                                                              }
-                                                            },
-                                                            icon: const Icon(
-                                                                Icons.remove),
-                                                          ),
-                                                          ReText(
-                                                            value:
-                                                                '${controller.menuItem[index][indexMenu][2]}',
-                                                            style: AppStyle()
-                                                                .titleMedium,
-                                                          ),
-                                                          IconButton(
-                                                            color:
-                                                                AppColor.accent,
-                                                            onPressed: () {
-                                                              controller.menuItem[
-                                                                          index]
-                                                                      [
-                                                                      indexMenu]
-                                                                  [2] += 1;
-                                                              controller
-                                                                  .itemCount
-                                                                  .value += 1;
-                                                              if (context
-                                                                  .mounted) {
-                                                                setState(() {});
-                                                              }
-                                                            },
-                                                            icon: const Icon(
-                                                                Icons.add),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  )
+                                                                        2] -= 1;
+                                                                    controller
+                                                                        .itemCount
+                                                                        .value -= 1;
+                                                                  }
+                                                                  if (context
+                                                                      .mounted) {
+                                                                    setState(
+                                                                        () {});
+                                                                  }
+                                                                },
+                                                                icon: const Icon(
+                                                                    Icons
+                                                                        .remove),
+                                                              ),
+                                                              ReText(
+                                                                value:
+                                                                    '${controller.menuItem[index][indexMenu][2]}',
+                                                                style: AppStyle()
+                                                                    .titleMedium,
+                                                              ),
+                                                              IconButton(
+                                                                color: AppColor
+                                                                    .accent,
+                                                                onPressed: () {
+                                                                  controller.menuItem[
+                                                                              index]
+                                                                          [
+                                                                          indexMenu]
+                                                                      [2] += 1;
+                                                                  controller
+                                                                      .itemCount
+                                                                      .value += 1;
+                                                                  if (context
+                                                                      .mounted) {
+                                                                    setState(
+                                                                        () {});
+                                                                  }
+                                                                },
+                                                                icon: const Icon(
+                                                                    Icons.add),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      )
+                                                    ],
+                                                  ),
                                                 ],
                                               ),
                                             ),

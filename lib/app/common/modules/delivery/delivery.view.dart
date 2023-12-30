@@ -128,7 +128,8 @@ Widget deliveryBodyContent(BuildContext context,
                                           arguments: {
                                             'id_detail_order':
                                                 menuList[indexItem]
-                                                    ['id_detail_order']
+                                                    ['id_detail_order'],
+                                            'data': menuList[indexItem],
                                           },
                                         );
                                       },

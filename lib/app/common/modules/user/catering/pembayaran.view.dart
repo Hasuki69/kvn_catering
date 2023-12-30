@@ -60,6 +60,20 @@ Widget cateringListBody(BuildContext context,
           height: 24,
         ),
         ReText(
+          value: 'Input alamat pengiriman:',
+          style: AppStyle().titleMedium,
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        ReTextField(
+          hintText: 'Masukkan alamat',
+          controller: controller.ctrlAlamat,
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        ReText(
           value: 'Menu yang dipesan:',
           style: AppStyle().titleMedium,
         ),
