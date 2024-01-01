@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:get/get.dart';
 import 'package:kvn_catering/app/common/modules/delivery/delivery.controller.dart';
 import 'package:kvn_catering/app/common/modules/gmap/gmap.view.dart';
 import 'package:kvn_catering/app/common/widgets/custom_text.dart';
 import 'package:kvn_catering/app/core/themes/style.dart';
+
+import '../../widgets/custom_button.dart';
 
 class DeliveryDetailView extends GetView<DeliveryController> {
   const DeliveryDetailView({super.key});
@@ -30,12 +33,42 @@ class DeliveryDetailView extends GetView<DeliveryController> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: ReText(
-                        value: "Detail Pengantaran",
-                        style: AppStyle().titleLarge,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ReText(
+                            value: "Detail Pengantaran",
+                            style: AppStyle().titleLarge,
+                          ),
+                        ),
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            ReIconButton(
+                              onPressed: () {
+                                controller.openPhone(
+                                    phone: Get.arguments['data']['nomer_telp']);
+                              },
+                              child: const Icon(
+                                Icons.phone_outlined,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            ReIconButton(
+                              onPressed: () {
+                                controller.openWhatsapp(
+                                    phone: Get.arguments['data']['nomer_telp']);
+                              },
+                              child: const FaIcon(
+                                FontAwesomeIcons.whatsapp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                     const Divider(),
                     Row(

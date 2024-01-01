@@ -5,6 +5,7 @@ import 'package:kvn_catering/app/common/services/local/location.service.dart';
 import 'package:kvn_catering/app/common/services/remote/delivery.service.dart';
 import 'package:kvn_catering/app/common/services/remote/order.service.dart';
 import 'package:kvn_catering/app/core/utils/extensions/loading_func.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DeliveryController extends GetxController {
   @override
@@ -35,6 +36,24 @@ class DeliveryController extends GetxController {
   get role => box.read('role') ?? 0;
 
   var futureDelivery = Future.value().obs;
+
+  Future<void> openPhone({required String phone}) async {
+    final url = Uri.parse('tel:$phone');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Tidak dapat membuka WhatsApp';
+    }
+  }
+
+  Future<void> openWhatsapp({required String phone}) async {
+    final url = Uri.parse('https://wa.me/$phone');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Tidak dapat membuka WhatsApp';
+    }
+  }
 
   void logout() {
     box.erase();
